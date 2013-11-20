@@ -1,0 +1,4 @@
+build/*
+mushroom-env/*
+NodeSite/vendor/*
+sqlite3.db
