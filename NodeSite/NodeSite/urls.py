@@ -7,7 +7,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-                       # Examples:
+                        # Examples:
                        url(r'^$', 'NodeSite.views.home', name='home'),
                        # url(r'^NodeSite/', include('NodeSite.foo.urls')),
 
@@ -25,3 +25,8 @@ urlpatterns += patterns('NodeSite.views',
                         url(r'^accounts/signup/$', 'signup', name='signup'),                #注册
                         url(r'^accounts/profile/$', 'profile', name='profile'),                #用户信息
                         )
+
+# Test
+urlpatterns += patterns('NodeSite.views',
+                        (r'^playlist/create/$', 'create_playlist'),
+)
