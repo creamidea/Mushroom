@@ -1,4 +1,5 @@
 build/*
 mushroom-env/*
+nodesit-env/*
 NodeSite/vendor/*
 sqlite3.db

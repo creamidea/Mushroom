@@ -27,6 +27,8 @@
         <!-- Add your site or application content here -->
         {% if user.is_authenticated %}
         {{ user.username }}
+        <a href="">系统设置</a>
+        <a href="{% url 'profile' %}">账户设置</a>
         <a href="{% url 'signout' %}">退出</a>
         {% else %}
         <a href="{% url 'signin' %}">登录</a>

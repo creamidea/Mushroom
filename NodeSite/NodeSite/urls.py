@@ -8,7 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
                         # Examples:
-                       url(r'^$', 'NodeSite.views.home', name='home'),
+
                        # url(r'^NodeSite/', include('NodeSite.foo.urls')),
 
                        # Uncomment the admin/doc line below to enable admin documentation:
@@ -20,13 +20,16 @@ urlpatterns = patterns('',
 
 # 账户设置
 urlpatterns += patterns('NodeSite.views',
-                        url(r'^accounts/signin/$', 'signin', name='signin'),                #登录
-                        url(r'^accounts/signout/$', 'signout', name='signout'),                #退出
+                        url(r'^$', 'home', name='home'),
+                        
+                        url(r'^accounts/login/$', 'signin', name='signin'),                #登录
+                        url(r'^accounts/logout/$', 'signout', name='signout'),                #退出
                         url(r'^accounts/signup/$', 'signup', name='signup'),                #注册
                         url(r'^accounts/profile/$', 'profile', name='profile'),                #用户信息
                         )
 
 # Test
+# test message
 urlpatterns += patterns('NodeSite.views',
                         (r'^playlist/create/$', 'create_playlist'),
 )

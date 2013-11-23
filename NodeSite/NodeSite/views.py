@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.views import login, logout
+from django.http import (HttpResponse, HttpResponseRedirect)
+from django.contrib.auth.views import (login, logout)
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 
-from django.contrib.auth.models import Group, Permission, User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import (Group, Permission, User)
+
 from django.contrib.contenttypes.models import ContentType
 
+from django.core.urlresolvers import reverse   #reverse函数可以像在模板中使用url那样，在代码中使用
+
+@login_required
 def home(request):
     return render(request, 'index.html')
 
@@ -15,7 +20,7 @@ def signin(request):
     return login(request, template_name = 'registration/signin.html')
 
 def signout(request):
-    return logout(request, next_page = '/')
+    return logout(request, next_page = reverse('home'))
 
 def signup(request):
     if request.method == 'POST':
@@ -31,19 +36,23 @@ def signup(request):
             p = Permission.objects.get_or_create(codename=u"can_vote", name=u"can vote", content_type=content_type)
             new_user = form.save()
             new_user.user_permissions.add(p)
-            return HttpResponseRedirect("/accounts/signin/")
+            return HttpResponseRedirect(reverse('singin'))
     else:
         form = UserCreationForm()
     return render(request, "registration/signup.html", {
         'form': form,
     })
 
+
 def profile(request):
     print '/////////////////////////////////'
     if request.user.has_perm('auth.can_vote'):
         print 'you can vote'
+    form = UserCreationForm()
     print request.user.get_all_permissions()
-    return render(request, 'profile.html')
+    return render(request, 'profile.html', {
+            'form': form,
+    })
 
 
 
