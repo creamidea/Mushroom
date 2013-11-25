@@ -17,7 +17,7 @@ def home(request):
     return render(request, 'index.html')
 
 def signin(request):
-    return login(request, template_name = 'registration/signin.html')
+    return login(request, template_name = 'accounts/signin.html')
 
 def signout(request):
     return logout(request, next_page = reverse('home'))
@@ -39,22 +39,28 @@ def signup(request):
             return HttpResponseRedirect(reverse('singin'))
     else:
         form = UserCreationForm()
-    return render(request, "registration/signup.html", {
+    return render(request, "accounts/signup.html", {
         'form': form,
     })
 
-
+@login_required
 def profile(request):
     print '/////////////////////////////////'
     if request.user.has_perm('auth.can_vote'):
         print 'you can vote'
     form = UserCreationForm()
     print request.user.get_all_permissions()
-    return render(request, 'profile.html', {
+    return render(request, 'accounts/profile.html', {
             'form': form,
     })
 
-
+@login_required
+def settings(request):
+    form = UserCreationForm()
+    print request.user.get_all_permissions()
+    return render(request, 'mushroom/settings.html', {
+        'form': form,
+    })
 
 # ==========================================================
 # test

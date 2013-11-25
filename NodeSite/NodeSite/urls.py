@@ -18,7 +18,7 @@ urlpatterns = patterns('',
                        url(r'^admin/', include(admin.site.urls)),
                        )
 
-# 账户设置
+# 账户设置，系统设置 
 urlpatterns += patterns('NodeSite.views',
                         url(r'^$', 'home', name='home'),
                         
@@ -26,7 +26,11 @@ urlpatterns += patterns('NodeSite.views',
                         url(r'^accounts/logout/$', 'signout', name='signout'),                #退出
                         url(r'^accounts/signup/$', 'signup', name='signup'),                #注册
                         url(r'^accounts/profile/$', 'profile', name='profile'),                #用户信息
+                        url(r'^mushroom/settings/$', 'settings', name='m_settings'),
                         )
+
+
+
 
 # Test
 # test message
