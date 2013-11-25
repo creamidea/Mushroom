@@ -1,3 +1,5 @@
+*.pyc
+
 build/*
 mushroom-env/*
 nodesit-env/*
