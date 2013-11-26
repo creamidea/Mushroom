@@ -4,10 +4,12 @@
 <p>这里是系统设置</p>
 
 <div id="some_id" class="some_class">
-  <p>增加普通用户</p>
+  <p>增加用户</p>
   <form method="POST" id="" action="">
     {% csrf_token %}
     {{ form.as_p }}  
+    <input type="radio" name="" value="" />普通用户
+    <input type="radio" name="" value="" />研究人员
     <input type="submit" name="" value="创建" />
   </form>
 </div>

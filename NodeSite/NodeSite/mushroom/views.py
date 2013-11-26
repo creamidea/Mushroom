@@ -10,16 +10,14 @@ from django.contrib.auth.models import (Group, Permission, User)
 
 from django.contrib.contenttypes.models import ContentType
 
-#reverse函数可以像在模板中使用url那样，在代码中使用
 from django.core.urlresolvers import reverse
 
+# Create your views here.
 @login_required
-def home(request):
-    return render(request, 'index.html')
-
-# ==========================================================
-# test
-def create_playlist(request):
+def settings(request):
+    form = UserCreationForm()
     print request.user.get_all_permissions()
-    messages.add_message(request, messages.INFO, 'Your playlist was added successfully')
-    return render(request, "playlists/create.html")
+    return render(request, 'settings.html', {
+        'form': form,
+    })
+

@@ -29,7 +29,7 @@ def signup(request):
         # print(caller__name__)
 
         if form.is_valid():
-            # content_type = ContentType.objects.get(app_label='auth', model='user')
+            content_type = ContentType.objects.get(app_label='account', model='user')
             # p, created = Permission.objects.get_or_create(codename=u"can_vote", name=u"can vote", content_type=content_type)
             p = Permission.objects.get_or_create(codename=u"can_vote", name=u"can vote", content_type=content_type)
             new_user = form.save()
@@ -47,7 +47,8 @@ def profile(request):
     if request.user.has_perm('auth.can_vote'):
         print 'you can vote'
     form = UserCreationForm()
-    print request.user.get_all_permissions()
+    print dir(request.user.groups)
+    # print request.user.get_all_permissions()
     return render(request, 'profile.html', {
         'form': form,
     })

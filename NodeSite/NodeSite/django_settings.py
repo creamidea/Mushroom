@@ -6,7 +6,6 @@ import os
 DEBUG = True
 # DEBUG = False
 TEMPLATE_DEBUG = DEBUG
-PROJECT_NAME = 'NodeSite'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -121,12 +120,16 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Compressor
+    'django.middleware.gzip.GZipMiddleware',
+    'pipeline.middleware.MinifyHTMLMiddleware',
 )
 
-ROOT_URLCONF = '%s.urls' % PROJECT_NAME
+ROOT_URLCONF = 'NodeSite.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = '%s.wsgi.application' % PROJECT_NAME
+WSGI_APPLICATION = 'NodeSite.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -146,11 +149,11 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
-    
+
     # 账户管理 
-    '%s.accounts' % PROJECT_NAME,
+    'NodeSite.accounts',
     # 系统设置
-    '%s.mushroom' % PROJECT_NAME,
+    'NodeSite.mushroom',
     
 )
     
@@ -193,109 +196,8 @@ LOGGING = {
     }
 }
 
-# ===============================================
-# Mail Server
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True 
-# ==============================================
-
-# ===============================================
-# pipeline settings
-# 将pipeline融入django
-INSTALLED_APPS += (
-    # django开发工具，
-    # 用于coffee->js
-    # compressor
-    'pipeline',
-)
-MIDDLEWARE_CLASSES += (
-    # Compressor
-    'django.middleware.gzip.GZipMiddleware',
-    'pipeline.middleware.MinifyHTMLMiddleware',
-)
-PIPELINE = True
-# 使用的存储方式
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
-
-# 在windows下开发，需要加入这句，否则将会报错：
-# CompressorError: The system cannot find the path specified.
-# 这个应该是路径配置问题，在Windows上的路径配置实在太让人纠结了。
-PIPELINE_YUGLIFY_BINARY = 'yuglify'
-
-# 因为实在Windows上开发，所以默认的coffee,lessc不能使用，需要手动更改
-PIPELINE_COFFEE_SCRIPT_BINARY = 'coffee'
-PIPELINE_COFFEE_SCRIPT_ARGUMENTS = '-bc'
-PIPELINE_LESS_BINARY = 'lessc'
-PIPELINE_LESS_ARGUMENTS = '-x'
-# 还没有想好如何配置yui-compressor压缩
-# PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yui.YUICompressor'
-# PIPELINE_CSS_COMPRESSOR = None
-# JS压缩貌似有问题，会报错在windows:CompressorError: The system cannot find the path specified.
-PIPELINE_JS_COMPRESSOR = None
-# 配置编译器，参数在上面
-PIPELINE_COMPILERS = (
-    'pipeline.compilers.less.LessCompiler',
-    'pipeline.compilers.coffee.CoffeeScriptCompiler',
-)
-
-# 这里是写css文件，less文件会被自动编译
-PIPELINE_CSS = {
-    'bootstrap': {
-        'source_filenames': (
-            'vendor/css/bootstrap.min.css',
-            'vendor/css/bootstrap-theme.min.css',
-        ),
-        'output_filename': 'css/bootstrap.css',
-    },
-    'normalize': {
-        'source_filenames': (
-            'vendor/css/normalize.css',
-        ),
-        'output_filename': 'css/normalize.css',
-    },
-    'main': {
-        'source_filenames': (
-            'vendor/css/main.css',
-        ),
-        'output_filename': 'css/main.css',
-    },
-    'le': {
-        'source_filenames': (
-            'less/le.less',
-        ),
-        'output_filename': 'css/le.css',
-    },
-}
-
-# 这里就是写js文件，coffee文件会被自动编译
-PIPELINE_JS = {
-    'jquery': {
-        'source_filenames': (
-            'vendor/js/jquery-1.10.2.min.js',
-        ),
-        'output_filename': 'js/jquery.min.js',
-    },
-    'bootstrap': {
-        'source_filenames': (
-            'vendor/js/bootstrap.min.js',
-        ),
-        'output_filename': 'js/bootstrap.min.js',
-    },
-    'modernizr': {
-        'source_filenames': (
-            'vendor/js/modernizr-2.6.2.min.js',
-        ),
-        'output_filename': 'js/modernizr.min.js',
-    },
-    # -----------------------------------------
-    'plugins': {
-        'source_filenames': (
-            'coffee/plugins.coffee',
-        ),
-        'output_filename': 'js/plugins.js',
-    },
-}
-# =============================================================
