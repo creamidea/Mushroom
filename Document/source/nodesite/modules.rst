@@ -5,4 +5,3 @@ NodeSite
    :maxdepth: 4
 
    NodeSite
-   manage

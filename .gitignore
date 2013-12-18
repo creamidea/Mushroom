@@ -6,4 +6,6 @@ nodesit-env/*
 NodeSite/vendor/*
 NodeSite/static/*
 
+Vendor/*
+
 sqlite3.db

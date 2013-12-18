@@ -7,7 +7,9 @@ from django.contrib.auth.views import (login, logout)
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import (login_required,
+                                            permission_required)
+
 from django.contrib.auth.models import (Permission, Group, User)
 
 from django.contrib.contenttypes.models import ContentType
@@ -50,5 +52,13 @@ def profile(request):
     print dir(request.user.groups)
     # print request.user.get_all_permissions()
     return render(request, 'profile.html', {
+        'form': form,
+    })
+
+@permission_required('auth.can_manage_users', raise_exception=True)
+def manage(request):
+    
+    form = UserCreationForm()
+    return render(request, 'manage.html', {
         'form': form,
     })

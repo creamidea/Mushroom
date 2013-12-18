@@ -1,5 +1,8 @@
 @ECHO OFF
 
+REM Use sphinx-apidoc to generate auto api
+sphinx-apidoc -o source\nodesite ..\NodeSite\NodeSite -f
+
 REM Command file for Sphinx documentation
 
 if "%SPHINXBUILD%" == "" (

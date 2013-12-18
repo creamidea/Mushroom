@@ -278,12 +278,19 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/jquery.min.js',
     },
+    'underscore': {
+        'source_filenames': (
+            'vendor/js/underscore-min.js',
+        ),
+        'output_filename': 'js/underscore-min.js',
+    },
     'bootstrap': {
         'source_filenames': (
             'vendor/js/bootstrap.min.js',
         ),
         'output_filename': 'js/bootstrap.min.js',
     },
+    ''
     'modernizr': {
         'source_filenames': (
             'vendor/js/modernizr-2.6.2.min.js',
