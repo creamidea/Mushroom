@@ -40,8 +40,13 @@
         <a href="{% url 'profile' %}">账户设置</a>
         <a href="{% url 'signout' %}">退出</a>
         {% else %}
-        <a href="{% url 'signin' %}">登录</a>
-        <a href="{% url 'signup' %}">注册</a>
+        <div id="login" class="login">
+          <label>用户名</label>
+          <input class="form-control" type="text" name="username" value="" />
+          <label>密码</label>
+          <input class="form-control" type="password" name="password" value="" />
+          <button class="btn btn-success">登录</button>
+        </div> 
         {% endif %}
 
         {% block content %}

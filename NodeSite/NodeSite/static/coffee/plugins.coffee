@@ -44,7 +44,7 @@
             xhr.setRequestHeader("X-CSRFToken", @getCookie('csrftoken'))
         return
     crossDomain: false
-    type: 'POST'
+    type: 'GET'
     send: (data)->
       try
         $.ajax
@@ -67,6 +67,16 @@
   class Get extends Ajax
     type: 'GET'
     send: (data)->
+      super(data)
+      
+  class Delete extends Ajax
+    type: 'DELETE'
+    send: (data) ->
+      super(data)
+      
+  class Put extends Ajax
+    type: 'PUT'
+    send: (data) ->
       super(data)
   ##############################################################
 )();

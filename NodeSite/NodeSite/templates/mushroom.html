@@ -1,0 +1,72 @@
+{% load staticfiles %}
+{% load compressed %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+        {% compressed_css 'normalize' %}
+        {% compressed_css 'main' %}
+        {% compressed_css 'bootstrap' %}
+        <!-- <link rel="stylesheet" href="{% static 'vendor/css/normalize.css' %}"> -->
+        <!-- <link rel="stylesheet" href="{% static 'vendor/css/main.css' %}"> -->
+        <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css'%}"> -->
+        <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-theme.min.css'%}"> -->
+        
+        {% compressed_js 'modernizr' %}
+        <!-- <script src="{% static 'vendor/js/modernizr-2.6.2.min.js' %}"></script> -->
+
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- Add your site or application content here -->
+        {% if user.is_authenticated %}
+        {{ user.username }}
+        <a href="{% url 'm_settings' %}">蘑菇房系统设置</a>
+        <a href="{% url 'manage' %}">用户管理</a>
+        <a href="{% url 'profile' %}">账户设置</a>
+        <a href="{% url 'signout' %}">退出</a>
+        {% else %}
+        <div id="login" class="login form-horizontal">
+          {% csrf_token %}
+          <label>用户名</label>
+          <input class="form-control" type="text" name="username" value="" />
+          <label>密码</label>
+          <input class="form-control" type="password" name="password" value="" />
+          <button class="btn btn-success login">登录</button>
+        </div> 
+        {% endif %}
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="{% static 'vendor/js/jquery-1.10.2.min.js' %}"><\/script>')</script>
+          {% compressed_js 'underscore' %}
+          {% compressed_js 'bootstrap' %}
+        <!-- <script src="{% static 'vendor/js/bootstrap.min.js' %}"></script> -->
+        <!-- <script src="{% static 'js/plugins.js' %}"></script> -->
+        <!-- <script src="{% static 'js/main.js' %}"></script> -->
+        {% compressed_js 'plugins' %}
+        {% compressed_js 'main' %}
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <!-- 暂时不需要 -->
+        <!-- <script> -->
+        <!--     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]= -->
+        <!--     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date; -->
+        <!--     e=o.createElement(i);r=o.getElementsByTagName(i)[0]; -->
+        <!--     e.src='//www.google-analytics.com/analytics.js'; -->
+        <!--     r.parentNode.insertBefore(e,r)}(window,document,'script','ga')); -->
+        <!--     ga('create','UA-XXXXX-X');ga('send','pageview'); -->
+        <!-- </script> -->
+    </body>
+</html>

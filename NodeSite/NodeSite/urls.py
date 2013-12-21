@@ -8,13 +8,14 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # 账户设置，系统设置 
+    # 账户设置，系统设置
     url(r'^accounts/', include('NodeSite.accounts.urls')),
     url(r'^mushroom/', include('NodeSite.mushroom.urls')),
 )
 
 urlpatterns += patterns('NodeSite.views',
     url(r'^$', 'home', name='home'),
+    url(r'^login/$', 'login', name='login'),
 )
 
 if settings.DEBUG:

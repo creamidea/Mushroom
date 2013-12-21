@@ -304,5 +304,11 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/plugins.js',
     },
+    'main': {
+        'source_filenames': (
+            'coffee/main.coffee',
+        ),
+        'output_filename': 'js/main.js',
+    },
 }
 # =============================================================
