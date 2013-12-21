@@ -2,7 +2,7 @@ The MIT License (MIT)
 [OSI Approved License]
 The MIT License (MIT)
 
-Copyright (c) 2013 August Trek (creamidea@gmail.com), macc(497066099@qq.com)
+Copyright (c) 2013 creamidea(creamidea@gmail.com), stella(stellazaizai@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-蘑菇项目前端及其服务器开发环境
+蘑菇项目前端及其服务器开发
 =======================
 
 虚拟开发环境
@@ -72,9 +72,9 @@ Reference:
 (mushroom)$ python mushroom-env\Scripts\django-admin.py startproject mushroom
 ```
 
-===========
+
 文件夹结构目录
-===========
+-----------
 
 ```
 | - Document 生成的文档以及参考的文档
@@ -87,12 +87,12 @@ Reference:
 | - Vendor   库提供商
 ```
 
-========
-Mushroom
-========
 
-=====
+Mushroom
+--------
+
+
 ISSUE
-=====
+-----
 用于记录django开发过程中遇到的问题，或者学习到的相关新知识，或者好的点子
 地址：https://github.com/creamidea/Mushroom/issues

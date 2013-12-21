@@ -2,7 +2,7 @@ The MIT License (MIT)
 [OSI Approved License]
 The MIT License (MIT)
 
-Copyright (c) 2013 August Trek (creamidea@gmail.com), macc(497066099@qq.com)
+Copyright (c) 2013 creamidea(creamidea@gmail.com), stella(stellazaizai@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
