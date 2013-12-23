@@ -258,6 +258,8 @@ PIPELINE_CSS = {
     },
     'main': {
         'source_filenames': (
+            'less/login.less',
+            'less/alert.less',
             'vendor/css/main.css',
         ),
         'output_filename': 'css/main.css',
@@ -278,6 +280,12 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/jquery.min.js',
     },
+    'handlebars': {
+        'source_filenames': (
+            'vendor/js/handlebars-v1.1.2.js',
+        ),
+        'output_filename': 'js/handlebars.min.js',
+    },
     'underscore': {
         'source_filenames': (
             'vendor/js/underscore-min.js',
@@ -290,7 +298,6 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/bootstrap.min.js',
     },
-    ''
     'modernizr': {
         'source_filenames': (
             'vendor/js/modernizr-2.6.2.min.js',
@@ -309,6 +316,12 @@ PIPELINE_JS = {
             'coffee/main.coffee',
         ),
         'output_filename': 'js/main.js',
+    },
+    'components': {
+        'source_filenames': (
+            'coffee/login.coffee',
+        ),
+        'output_filename': 'js/components.js',
     },
 }
 # =============================================================

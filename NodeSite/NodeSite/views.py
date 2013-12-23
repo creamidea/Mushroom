@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 
 from django.contrib.auth.models import (Group, Permission, User)
 
@@ -16,10 +17,27 @@ from django.contrib.contenttypes.models import ContentType
 #reverse函数可以像在模板中使用url那样，在代码中使用
 from django.core.urlresolvers import reverse
 
-# 结果序列化
-def serial(func):
-    pass
-
+from functools import wraps
+# from decorator import decorator
+import json
+def serialize(target="json"):
+    """使用装饰器序列化参数"""
+    _serialize = {
+        "json": json.dumps,
+    }
+    def wrapper1(func):
+        @wraps(func)
+        def wrapper2(*args, **kwargs):
+            result = func(*args, **kwargs)
+            try:
+                response = HttpResponse(_serialize[target](result))
+            except:
+                error = '{"code": %d, "definition": %s}' % (-1, "序列化错误")
+                response = HttpResponse(error)
+            return response
+        return wrapper2
+    return wrapper1
+    
 # @login_required
 def home(request):
     """
@@ -32,22 +50,34 @@ def home(request):
         request.session.delete_test_cookie()
     return render(request, 'mushroom.html')
 
+@serialize("json")
+@require_POST
 def login(request):
+    """
+    登录处理函数
+    
+    :param request: request对象
+    :rtype: HttpResponse JSON
+    """
     username = request.POST['username']
     password = request.POST['password']
     print "username: %s, password: %s" % (username, password)
     user = authenticate(username=username, password=password)
-    mesg = ""
+    mesg, code = ("", "")
     if user is not None:
         if user.is_active:
             djangoLogin(request, user)
-            
+            code = "0"
             mesg = "User is valid, active and authenticated"
         else:
-            mesg = "The password is valid, but the account has been disabled!"
+            code = "-1"
+            mesg = "账户处于未激活状态"
+            # mesg = "The password is valid, but the account has been disabled!"
     else:
-        mesg = "The username and password were incorrect."
-    return HttpResponse(mesg)
+        code = "-1"
+        mesg = "用户名或者密码错误"
+        # mesg = "The username and password were incorrect."
+    return {"code": code, "definition": mesg}
 
 # ==========================================================
 # test

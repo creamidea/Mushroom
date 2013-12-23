@@ -54,18 +54,24 @@ $ mushroom-env\Scripts\django-admin.py mushroom
 ```
 
 **安装和配置django-pipeline**
+
 安装
 ```shell
 (mushroom)$ pip install django-pipeline
 ```
 
-配置:
-
+配置: \
 暂时提供windows平台的配置，请参考[这里](https://github.com/creamidea/Mushroom/issues/10)
 （我想应该没有什么比在Windows上配置环境更加的难过的事情了吧（笑））
 
 Reference:
 [Installation](http://django-pipeline.readthedocs.org/en/latest/installation.html)
+
+**安装decorator 3.4.0**
+为了避免使用了装饰器，导致sphinx不能正常工作的情形发生
+```shell
+(mushroom)$ easy_install decorator
+```
 
 **创建工程**
 ```shell
