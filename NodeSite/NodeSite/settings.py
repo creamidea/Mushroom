@@ -259,7 +259,8 @@ PIPELINE_CSS = {
     'main': {
         'source_filenames': (
             'less/login.less',
-            'less/alert.less',
+            'less/echo.less',
+            'less/main.less',
             'vendor/css/main.css',
         ),
         'output_filename': 'css/main.css',
@@ -320,6 +321,8 @@ PIPELINE_JS = {
     'components': {
         'source_filenames': (
             'coffee/login.coffee',
+            'coffee/room.coffee',
+            'coffee/sidebar.coffee',
         ),
         'output_filename': 'js/components.js',
     },

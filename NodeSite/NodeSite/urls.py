@@ -16,6 +16,11 @@ urlpatterns = patterns('',
 urlpatterns += patterns('NodeSite.views',
     url(r'^$', 'home', name='home'),
     url(r'^login/$', 'login', name='login'),
+    url(r'^login-test/$', 'login_test', name="login_test"),
+    url(r'^logout/$', 'logout', name='logout'),
+    url(r'^rooms/$', 'get_rooms', name="get_rooms"),
+    url(r'^search/$', 'search', name="search"),
+    url(r'^policy/now/room/(\d+)/$', 'get_now_policy_by_room_id',)
 )
 
 if settings.DEBUG:

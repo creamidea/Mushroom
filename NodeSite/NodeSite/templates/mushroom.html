@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
+    <title>蘑菇监控系统控制平台</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -17,13 +17,8 @@
     {% compressed_css 'normalize' %}
     {% compressed_css 'main' %}
     {% compressed_css 'bootstrap' %}
-    <!-- <link rel="stylesheet" href="{% static 'vendor/css/normalize.css' %}"> -->
-    <!-- <link rel="stylesheet" href="{% static 'vendor/css/main.css' %}"> -->
-    <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css'%}"> -->
-    <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-theme.min.css'%}"> -->
     
     {% compressed_js 'modernizr' %}
-    <!-- <script src="{% static 'vendor/js/modernizr-2.6.2.min.js' %}"></script> -->
 
   </head>
   <body>
@@ -32,15 +27,12 @@
         <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div id="echo" class="alert" hide></div>
-    {% if user.is_authenticated %}
-    {{ user.username }}
-    <a href="{% url 'm_settings' %}">蘑菇房系统设置</a>
-    <a href="{% url 'manage' %}">用户管理</a>
-    <a href="{% url 'profile' %}">账户设置</a>
-    <a href="{% url 'signout' %}">退出</a>
-    {% else %}
-    <form id="login" class="login form-horizontal" hide>
+
+    <!-- 提示层 Echo Layer -->
+    <ul id="echo-list"></ul>
+
+    <!-- 登录界面 Login -->
+    <form id="login" class="form-horizontal" hide>
       {% csrf_token %}
       <div class="form-group">
         <!-- <label for="inputEmail3" class="col-sm-2 control-label">Email</label> -->
@@ -59,7 +51,7 @@
         <div class="col-sm-offset-2 col-sm-10">
           <div class="checkbox">
             <label>
-              <input type="checkbox"> 记住我两周
+              <input type="checkbox" name="remember"> 记住我两周
             </label>
           </div>
         </div>
@@ -70,7 +62,11 @@
         </div>
       </div>
     </form> 
-    {% endif %}
+
+    <!-- HTML Template -->
+    <!-- -------------------------
+         Test
+      ---------------------------- -->
     <script id="entry-template" type="text/x-handlebars-template">
       {% verbatim %} 
       <div class="entry">
@@ -82,27 +78,248 @@
       {% endverbatim %} 
     </script>
 
+    <script id="sidebar-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <div id="basic">
+        <div id="gavatar">
+          <img src="{{gavatar}}" class="" alt="gavatar" />
+        </div>
+        <div id="username">{{ username }}</div> 
+      </div> 
+      <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+        <ul class="nav sidenav">
+          {{#each menu}}
+          <li url="{{url}}"><a href="{{url}}">{{name}}</a></li>
+          {{/each}}
+        </ul>
+      </nav>
+      <footer>
+        <p>Copyright: {{copyright}}</p>
+        <p>Version: {{version}}</p>
+      </footer>
+      {% endverbatim %} 
+    </script>
+
+    <script id="room-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <li id="room-{{roomId}}" class="room"></li>
+      {% endverbatim %} 
+    </script>
+
+    <script id="room-thumbnail-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <div id="room-{{roomId}}-thumbnail" class="room-thumbnail">
+        <div class="up">
+          <div id="room-basic" class="card first-card">
+            <label id="room-{{roomId}}-roomName" class="lt room-name" for="room-{{roomId}}-roomName">{{roomName}}</label>
+            <!-- <input id="room-{{roomId}}-roomName" type="text" name="roomName" value="" /> -->
+            <label id="plant-{{plantId}}-plantName" class="rb plant-name" for="room-{{roomId}}-plantName">{{plantName}}</label>
+            <!-- <input id="room-{{roomId}}-plantName" type="text" name="plantName" value="" /> -->
+          </div> 
+          {{#each sensors}}
+          <div id="room-{{../roomId}}-{{@key}}" class="card">
+            <p>{{this}}</p>
+          </div>
+          {{/each}}
+        </div>
+        <div class="down">
+          <nav id="room-{{roomId}}-menu" class="room-menu">
+            <ul>
+              {{#each menu}}
+              <li>
+                <a href="#{{@key}}/room-{{../roomId}}">
+                  <span class="glyphicon {{this}}"></span>
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+          </nav> 
+          <div id="room-{{roomId}}-light" class="room-light" brightness="{{brightness}}"></div> 
+        </div> 
+
+        <div class="room-search">
+          <form class="form-inline" role="form">
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="传感器的名称" name="sensor">
+            </div>
+            <div class="form-group">
+              <input type="date" class="form-control" placeholder="起始时间" name="start-date">
+            </div>
+            <div class="form-group">
+              <input type="date" class="form-control" placeholder="终止时间" name="end-date">
+            </div>
+            <button type="submit" class="btn btn-primary" name="submit">查询</button>
+          </form> 
+        </div>
+
+      </div> 
+      {% endverbatim %} 
+    </script>
+
+    <script id="room-env-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <div id="room-{{roomId}}-env" class="room-env">
+        <section>
+          <h3>今日数据</h3>
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#room-{{roomId}}-chart" data-toggle="tab">图标</a></li>
+            <li><a href="#room-{{roomId}}-table" data-toggle="tab">表格</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="room-{{roomId}}-chart">这里是图标</div>
+            <div class="tab-pane fade" id="room-{{roomId}}-table">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>时间</th>
+                    <th>监控量</th>
+                    <th>范围</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2013-12-28</td>
+                    <td>15:10</td>
+                    <td>温度</td>
+                    <td>4~6</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div> 
+      {% endverbatim %} 
+    </script>
+
+    <script id="room-policy-viewer-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <div id="room-{{roomId}}-policy-viewer" class="room-policy viewer">
+        <h3>任务进行时</h3>
+        <div class="timeline"></div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>二氧化碳范围</th>
+              <th>温度范围</th>
+              <th>湿度范围</th>
+              <th>光色</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each policy}}
+            <tr>
+              <td>{{date}} {{hour}}</td>
+              <td>{{co2}}</td>
+              <td>{{temperature}}</td>
+              <td>{{humidity}}</td>
+              <td brightness="{{brightness}}">{{brightness}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div> 
+      {% endverbatim %} 
+    </script>
+
+    <script id="room-policy-setter-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <div id="room-{{roomId}}-policy-setter" class="room-policy setter">
+        <h3>设置任务</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>时间</th>
+              <th>二氧化碳范围</th>
+              <th>温度范围</th>
+              <th>湿度范围</th>
+            </tr>
+          </thead>
+          <tbody class="form-inline">
+            <tr>
+              <td>
+                <input type="date" name="date" class="form-control" placeholder="间隔天数" /> 
+                <input type="time" name="time" class="form-control" placeholder="间隔小时" /> 
+              </td>
+              <td>
+                <input type="number" name="" class="form-control" placeholder="下限" /> 
+                <input type="number" name="" class="form-control" placeholder="上限" /> 
+              </td>
+              <td>
+                <input type="number" name="" class="form-control" placeholder="下限" /> 
+                <input type="number" name="" class="form-control" placeholder="上限" /> 
+              </td>
+              <td>
+                <input type="number" name="" class="form-control" placeholder="下限" /> 
+                <input type="number" name="" class="form-control" placeholder="上限" /> 
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div> 
+      {% endverbatim %} 
+    </script>
+
+    <script id="room-controller-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <div id="room-{{roomId}}-controller" class="room-controller">
+        <h3>设备控制面板</h3>
+        <div class="switcher-list">
+          {{#each sensors}}
+          <div id="room-{{../roomId}}-{{@key}}">
+            <input type="checkbox" name="switcher" id="room-{{../roomId}}-{{@key}}-switcher"/>
+            <label class="switcher" for="room-{{../roomId}}-{{@key}}-switcher">{{@key}}</label>
+          </div> 
+          {{/each}}
+        </div> 
+        <div id="">
+          <input type="number" name="" id="id5" placeholder="采集频率"/>
+          <button class="btn btn-success">设置</button>
+        </div> 
+      </div> 
+      {% endverbatim %} 
+    </script>
+    <!-- 模板结束部分 -->
+
+    <!-- 网页主体部分 -->
+    <div class="wrapper row">
+
+      <div id="sidebar" class="col-md-2" hide></div> 
+
+      <div id="content" class="col-md-10">
+        <nav id="room-cards">
+          <ul id="room-list">
+          </ul>
+        </nav> 
+      </div> 
+
+    </div> 
+    <!-- 网页主体结束部分 -->
+
+    <!-- 加载JavaScript -->
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
     <!-- <script>window.jQuery || document.write('<script src="{% static 'vendor/js/jquery-1.10.2.min.js' %}"><\/script>')</script> -->
-      {% compressed_js 'jquery' %}
-      {% compressed_js 'handlebars' %}
-      {% compressed_js 'underscore' %}
-      {% compressed_js 'bootstrap' %}
-      <!-- <script src="{% static 'vendor/js/bootstrap.min.js' %}"></script> -->
-      <!-- <script src="{% static 'js/plugins.js' %}"></script> -->
-      <!-- <script src="{% static 'js/main.js' %}"></script> -->
-      {% compressed_js 'plugins' %}
-      {% compressed_js 'components' %}
-      {% compressed_js 'main' %}
-      <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-      <!-- 暂时不需要 -->
-      <!-- <script> -->
-      <!--     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]= -->
-      <!--     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date; -->
-      <!--     e=o.createElement(i);r=o.getElementsByTagName(i)[0]; -->
-      <!--     e.src='//www.google-analytics.com/analytics.js'; -->
-      <!--     r.parentNode.insertBefore(e,r)}(window,document,'script','ga')); -->
-      <!--     ga('create','UA-XXXXX-X');ga('send','pageview'); -->
-      <!-- </script> -->
+    <!-- 基础库 -->
+    {% compressed_js 'jquery' %}
+    {% compressed_js 'handlebars' %}
+    {% compressed_js 'underscore' %}
+    {% compressed_js 'bootstrap' %}
+    <!-- 核心 -->
+    {% compressed_js 'plugins' %}
+    {% compressed_js 'components' %}
+    {% compressed_js 'main' %}
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <!-- 暂时不需要 -->
+    <!-- <script> -->
+    <!--     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]= -->
+    <!--     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date; -->
+    <!--     e=o.createElement(i);r=o.getElementsByTagName(i)[0]; -->
+    <!--     e.src='//www.google-analytics.com/analytics.js'; -->
+    <!--     r.parentNode.insertBefore(e,r)}(window,document,'script','ga')); -->
+    <!--     ga('create','UA-XXXXX-X');ga('send','pageview'); -->
+    <!-- </script> -->
   </body>
 </html>
