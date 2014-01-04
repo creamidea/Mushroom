@@ -78,6 +78,7 @@
       {% endverbatim %} 
     </script>
 
+    <!-- sidebar -->
     <script id="sidebar-template" type="text/x-handlebars-template">
       {% verbatim %} 
       <div id="basic">
@@ -100,12 +101,15 @@
       {% endverbatim %} 
     </script>
 
+    <!-- room -->
     <script id="room-template" type="text/x-handlebars-template">
       {% verbatim %} 
+      {{! 房间的模板，用于放各个房间的部件}}
       <li id="room-{{roomId}}" class="room"></li>
       {% endverbatim %} 
     </script>
 
+    <!-- room thumbnail -->
     <script id="room-thumbnail-template" type="text/x-handlebars-template">
       {% verbatim %} 
       <div id="room-{{roomId}}-thumbnail" class="room-thumbnail">
@@ -115,6 +119,9 @@
             <!-- <input id="room-{{roomId}}-roomName" type="text" name="roomName" value="" /> -->
             <label id="plant-{{plantId}}-plantName" class="rb plant-name" for="room-{{roomId}}-plantName">{{plantName}}</label>
             <!-- <input id="room-{{roomId}}-plantName" type="text" name="plantName" value="" /> -->
+          </div> 
+          <div id="room-{{roomId}}-time" class="card datetime">
+            {{datetime}}
           </div> 
           {{#each sensors}}
           <div id="room-{{../roomId}}-{{@key}}" class="card">
@@ -127,7 +134,7 @@
             <ul>
               {{#each menu}}
               <li>
-                <a href="#{{@key}}/room-{{../roomId}}">
+                <a href="#{{@key}}/room/{{../roomId}}/">
                   <span class="glyphicon {{this}}"></span>
                 </a>
               </li>
@@ -136,11 +143,11 @@
           </nav> 
           <div id="room-{{roomId}}-light" class="room-light" brightness="{{brightness}}"></div> 
         </div> 
-
+        <!-- 查询/下载组件 -->
         <div class="room-search">
           <form class="form-inline" role="form">
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="传感器的名称" name="sensor">
+              <input type="text" class="form-control" placeholder="监控对象名称" name="sensor">
             </div>
             <div class="form-group">
               <input type="date" class="form-control" placeholder="起始时间" name="start-date">
@@ -148,10 +155,10 @@
             <div class="form-group">
               <input type="date" class="form-control" placeholder="终止时间" name="end-date">
             </div>
-            <button type="submit" class="btn btn-primary" name="submit">查询</button>
+            <button type="submit" class="btn btn-primary" name="search">查询</button>
           </form> 
         </div>
-
+        <!-- 查询组件结束 -->
       </div> 
       {% endverbatim %} 
     </script>
@@ -224,61 +231,92 @@
       {% endverbatim %} 
     </script>
 
-    <script id="room-policy-setter-template" type="text/x-handlebars-template">
+
+    <script id="policy-list-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      {{#each list}}
+      <li policy-id="{{policyId}}"><a href="#policy/{{policyId}}/">{{description}}</a></li>
+      {{/each}}
+      {% endverbatim %} 
+    </script>
+
+    <script id="table-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <table class="table">
+        <thead>
+          <tr>
+            {{thead}}
+          </tr>
+        </thead>
+        <tbody class="form-inline">
+          {{tbody}}
+        </tbody>
+      </table>
+      {% endverbatim %} 
+    </script>
+
+    
+    <script id="policy-input-template" type="text/x-handlebars-template">
+      {% verbatim %}
+      {{modelList}}
+      {% endverbatim%}
+    </script>
+
+    <script id="policy-setter-template" type="text/x-handlebars-template">
       {% verbatim %} 
       <div id="room-{{roomId}}-policy-setter" class="room-policy setter">
         <h3>设置任务</h3>
+        <!-- policy list展示区 -->
+        <ul class="model-list">
+        </ul> 
+        <!-- policy设置区 -->
         <table class="table">
           <thead>
             <tr>
               <th>时间</th>
+              <th>时间</th>
+              <th>二氧化碳范围</th>
               <th>二氧化碳范围</th>
               <th>温度范围</th>
+              <th>温度范围</th>
               <th>湿度范围</th>
+              <th>湿度范围</th>
+              <th>光照</th>
             </tr>
           </thead>
           <tbody class="form-inline">
-            <tr>
-              <td>
-                <input type="date" name="date" class="form-control" placeholder="间隔天数" /> 
-                <input type="time" name="time" class="form-control" placeholder="间隔小时" /> 
-              </td>
-              <td>
-                <input type="number" name="" class="form-control" placeholder="下限" /> 
-                <input type="number" name="" class="form-control" placeholder="上限" /> 
-              </td>
-              <td>
-                <input type="number" name="" class="form-control" placeholder="下限" /> 
-                <input type="number" name="" class="form-control" placeholder="上限" /> 
-              </td>
-              <td>
-                <input type="number" name="" class="form-control" placeholder="下限" /> 
-                <input type="number" name="" class="form-control" placeholder="上限" /> 
-              </td>
-            </tr>
-
+            {{ tbody }}
           </tbody>
         </table>
+        <form class="form-inline" role="form">
+          <input type="text" name="description" value="" placeholder="策略描述"/>
+          <input type="date" name="startDate" value="" />
+          <input type="time" name="startTime" value="" />
+          <button type="submit" class="btn btn-primary" name="submit">提交</button>
+        </form> 
       </div> 
       {% endverbatim %} 
     </script>
 
     <script id="room-controller-template" type="text/x-handlebars-template">
       {% verbatim %} 
-      <div id="room-{{roomId}}-controller" class="room-controller">
+      <div id="room-{{roomId}}-controller-pane" class="room-controller-pane">
         <h3>设备控制面板</h3>
         <div class="switcher-list">
-          {{#each sensors}}
-          <div id="room-{{../roomId}}-{{@key}}">
-            <input type="checkbox" name="switcher" id="room-{{../roomId}}-{{@key}}-switcher"/>
-            <label class="switcher" for="room-{{../roomId}}-{{@key}}-switcher">{{@key}}</label>
+          {{#each context}}
+          <div id="controller-{{controllerId}}">
+            <!-- checkbox有一个checked状态，无法在这里直接表现，放入代码 -->
+            {{controller}}
           </div> 
           {{/each}}
         </div> 
-        <div id="">
-          <input type="number" name="" id="id5" placeholder="采集频率"/>
-          <button class="btn btn-success">设置</button>
-        </div> 
+        <form name="freg-adjust" role="form" class="form-inline">
+          <div class="form-group">
+            <label for="id5" class="sr-only">采集频率</label>
+            <input type="number" class="form-control" name="freg-adjust" id="id5" placeholder="采集频率"/>
+          </div>
+          <button name="freg-adjust" class="btn btn-success">设置</button>
+        </form> 
       </div> 
       {% endverbatim %} 
     </script>
@@ -290,10 +328,24 @@
       <div id="sidebar" class="col-md-2" hide></div> 
 
       <div id="content" class="col-md-10">
+
+        <div id="config" class="config">
+          <form>
+            <select id="config-type">
+              <option value="ERROR">错误</option>
+              <option value="COMMUNICATION">通信</option>
+              <option value="DEBUG">调试</option>
+              <option value="WORK">工作</option>
+            </select>
+            <button type="submit">提交</button>
+          </form>
+        </div> 
+
         <nav id="room-cards">
           <ul id="room-list">
           </ul>
         </nav> 
+
       </div> 
 
     </div> 

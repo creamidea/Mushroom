@@ -90,10 +90,34 @@ test {
         height: 100%;
         z-index: 99;
     }
+
+    
+    @media (max-width: 992px) {
+        overflow: auto;
+        #basic {
+            float: left;
+            width: 15%;
+            padding-top: 1%;
+        }
+        nav {
+            float: right;
+            padding-right: 27%;
+            padding-top: 5%;
+            li {
+                float: left;
+            }
+        }
+        footer {
+            position: absolute;
+            right: 6%;
+            bottom: 24%;
+        }
+    }
+
     color: white;
     background: #010101;
     .shadow(2px, 2px, 8px, 0, black);
-
+    
     #gavatar {
         @media (min-width: 992px) {
             padding-top: 27%;
@@ -170,10 +194,13 @@ test {
     #room-list {
         list-style-type: none;
         padding: 0 0;
-        padding-left: 17%;
+        @media (min-width: 992px) {
+            padding-left: 17%;
+        }
+
         .room {
             list-style-type: none;
-            width: 626px;
+            width: 780px;
             background: black;
             box-shadow: 2px 2px 4px black;
             margin: 2% 0;
@@ -240,6 +267,9 @@ test {
                             font-size: 0.8em;
                         }
                     }
+                    p.date {
+                        font-size: 1em !important;
+                    }
                     .clearfix()
                 }
                 .down {
@@ -278,9 +308,15 @@ test {
 
                 .room-search {
                     .fix-left-missing;
+                    form{
+                        padding-left: 5%;
+                    }
                     a, button {
-                        position: absolute;
-                        right: 1px;
+                        /* position: absolute; */
+                        /* right: 1px; */
+                        float: right;
+                        width: 20%;
+                        margin-right: 5%;
                     }
                 }                   /*room-search*/
 
@@ -329,13 +365,25 @@ test {
                     border: 3px solid black;
                 }
             }        /*room-policy*/
-            .room-controller {
+            .room-controller-pane {
                 position: relative;
                 margin-left: -2px;
                 border: 3px solid #000;
                 background: white;
                 h3 {
                     .room-band(#ff9933);
+                }
+                .switcher-list {
+                    div {
+                        float: left;
+                        padding: 4% 10% 4% 24%;
+                        border-right: 4px azure;
+                        text-align: center;
+                    }
+                }
+                form[name=freg-adjust] {
+                    padding-left: 30%;
+                    padding-bottom: 4%;
                 }
                 .switcher {
                     position: relative;

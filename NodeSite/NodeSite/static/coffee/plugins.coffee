@@ -43,8 +43,9 @@
 
   # 监听hashchange事件，然后利用sub/pub系统简单的实现一个路由功能
   class Router
+    # exclue: []
     constructor: (@id) ->
-
+      
     start: ->
       # 全局简单路由信号发送器
       $(window).on "hashchange", ->
@@ -91,21 +92,22 @@
     _success: (data) =>
           # console.log data
       # try
+          console.log data
           data = JSON.parse(data)
           code = data.code || "0"
           # definition = data.definition
           # console.log definition
           # console.log data
           if code is "-1"
-            # $.publish "#echo", [{code: -1, definition: definition}]
-            $.publish "#echo", [data]
+            # $.publish "#echo/", [{code: -1, definition: definition}]
+            $.publish "#echo/", [data]
           if typeof @success is "function"
             @success(data)          
       # catch error
-      #     $.publish "#echo", [{code: -1, definition: error || "JSON解析错误"}]
+      #     $.publish "#echo/", [{code: -1, definition: error || "JSON解析错误"}]
     _fail: (jqXHR, textStatus, errorThrown) =>
       # console.log arguments
-      $.publish "#echo", [{code: -1, definition: errorThrown || "通讯错误"}]
+      $.publish "#echo/", [{code: -1, definition: errorThrown || "通讯错误"}]
       console.log @fail, typeof @fail
       if typeof @fail is "function"
         @fail(jqXHR, textStatus, errorThrown)
@@ -159,7 +161,11 @@
       # console.log context, @templateName
       source = $(@templateName).html()
       template = Handlebars.compile(source)
-      if helper
+      # console.log helper
+      # Handlebars.registerHelper helper.tag, helper.fun
+      if $.isArray helper
+        Handlebars.registerHelper h.tag, h.fun for h in helper
+      else if $.isPlainObject helper
         Handlebars.registerHelper helper.tag, helper.fun
         # console.log helper
         # helper()
@@ -209,7 +215,7 @@
   # error = {code: [:code], definition: [:definition]}
   class Echo
     constructor: (uri) ->
-      @uri = uri || "#echo"
+      @uri = uri || "#echo/"
       @$echoList = $echo = $('#echo-list') #存放错误的容器
       #理论上需要ubsubscribe，但是这里就不做了
     start: ->
@@ -230,5 +236,8 @@
       definition = error.definition || "未知错误定义"
       @show(definition)
       return
+    hint: (info) =>
+      {code, definition} = info
+      @show(definition||"未知错误定义")
   ##############################################################
 )();

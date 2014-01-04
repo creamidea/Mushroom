@@ -8,6 +8,9 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 PROJECT_NAME = 'NodeSite'
 
+MIDDLEWARE_PORT = 10002
+MIDDLEWARE_ADDRESS = "192.168.1.250"
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )

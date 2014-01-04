@@ -55,9 +55,10 @@ def userpackage(user):
         "groupName":"Admin",
         "menu": [
             {"url": "#mushroom", "name": u"蘑菇房"},
-            {"url": "#profile", "name": u"个人信息"},
-            {"url": "#log", "name": u"日志"},
-            {"url": "#logout", "name": u"退出"},
+            {"url": "#profile/", "name": u"个人信息"},
+            {"url": "#log/", "name": u"日志"},
+            {"url": "#config/", "name": u"设置"},
+            {"url": "#logout/", "name": u"退出"},
         ],
         "copyright": "CSLG",
         "version": "v0.0.1",
@@ -148,7 +149,6 @@ def logout(request):
         return {"code": code, "definition": mesg}
 
 @serialize("json")
-@require_POST
 def get_rooms(request):
     context = [{
       "roomId": 1,
@@ -169,46 +169,46 @@ def get_rooms(request):
         "controller": "glyphicon-wrench",
       },
         
-    },
-    {
-      "roomId": 2,
-      "roomName": "房间2",
-      "plantId": 1,
-      "plantName": "蘑菇",
-      "time": "2013-12-25 16:41",
-      "sensors": {
-        "temperature": 18,
-        "co2": 24,
-        "humidity": 150,
-       },
-      "brightness": "yellow",
-        "menu": {
-            "data": "glyphicon-sort",
-            "policy/viewer": "glyphicon-list-alt",
-            "policy/setter": "glyphicon-pencil",
-            "controller": "glyphicon-wrench",
-        },
-    },
-    {
-      "roomId": 3,
-      "roomName": "房间3",
-      "plantId": 1,
-      "plantName": "蘑菇",
-      "time": "2013-12-25 16:41",
-      "sensors": {
-        "temperature": 18,
-        "co2": 24,
-        "humidity": 150,
-       },
-      "brightness": "yellow",
-        "menu": {
-            "data": "glyphicon-sort",
-            "policy/viewer": "glyphicon-list-alt",
-            "policy/setter": "glyphicon-pencil",
-            "controller": "glyphicon-wrench",
-        },
+    # },
+    # {
+    #   "roomId": 2,
+    #   "roomName": "房间2",
+    #   "plantId": 2,
+    #   "plantName": "蘑菇",
+    #   "time": "2013-12-25 16:41",
+    #   "sensors": {
+    #     "temperature": 18,
+    #     "co2": 24,
+    #     "humidity": 150,
+    #    },
+    #   "brightness": "yellow",
+    #     "menu": {
+    #         "data": "glyphicon-sort",
+    #         "policy/viewer": "glyphicon-list-alt",
+    #         "policy/setter": "glyphicon-pencil",
+    #         "controller": "glyphicon-wrench",
+    #     },
+    # },
+    # {
+    #   "roomId": 3,
+    #   "roomName": "房间3",
+    #   "plantId": 3,
+    #   "plantName": "蘑菇",
+    #   "time": "2013-12-25 16:41",
+    #   "sensors": {
+    #     "temperature": 18,
+    #     "co2": 24,
+    #     "humidity": 150,
+    #    },
+    #   "brightness": "yellow",
+    #     "menu": {
+    #         "data": "glyphicon-sort",
+    #         "policy/viewer": "glyphicon-list-alt",
+    #         "policy/setter": "glyphicon-pencil",
+    #         "controller": "glyphicon-wrench",
+    #     },
     }]
-    return {"code": 0, "number": len(context),"context": context}
+    return {"code": 0, "definition": "jla;jfklds", "context": context}
 
 
 @serialize("json")
@@ -220,7 +220,6 @@ def search(request):
     sensor_id = post["sensorId"]
     start_date = post["startDate"]
     end_date = post["endDate"]
-    print "hello"
     print room_id, sensor_id, start_date, end_date
     return {"code": 0, "data": "wait"}
 
@@ -229,7 +228,7 @@ def search(request):
 def get_now_policy_by_room_id(request, room_id):
     print room_id
     data = {
-        "roomId": 1,
+        "roomId": room_id,
         "policyId": 1,
         "description": "我也不知道养什么啊",
         "policy": [
@@ -252,9 +251,226 @@ def get_now_policy_by_room_id(request, room_id):
         ]
     }
     return {"code": 0, "data": data}
+
+
+@serialize("json")
+def get_room_controller_list(request, room_id):
+    data = [
+        {
+            "roomId": room_id,
+            "controllerId": 1,
+            "controllerType": "风机",
+            "state": "on",
+        },
+        {
+            "roomId": room_id,
+            "controllerId": 2,
+            "controllerType": "加湿器",
+            "state": "off",
+        },
+        {
+            "roomId": room_id,
+            "controllerId": 3,
+            "controllerType": "温度控制器",
+            "state": "on",
+        },
+        {
+            "roomId": room_id,
+            "controllerId": 4,
+            "controllerType": "LED控制",
+            "state": "off",
+        },
+        ]
+
+    return {"code": 0, "data": data}
+
+@serialize('json')
+def get_room_controller(request, room_id, controller_id):
+    return {"code": 0, "definition": "设备开启成功"}
     
+@serialize("json")
+def policy_list(request):
+    if request.method == 'GET':
+        data = [
+            {
+            "policyId": 1,
+            "description": "养殖蘑菇1",
+            },
+            {
+            "policyId": 2,
+            "description": "养殖蘑菇2",
+            },
+            {
+            "policyId": 3,
+            "description": "养殖蘑菇3",
+            },
+            ]
+        return {"code":0, "data": data}
+    else:
+        return {"code":-1, "definition": "不是get方法"}
     
+@serialize("json")
+def policy_view(request, policy_id=-1):
+    if request.method == 'GET':
+        code = 0
+        definition = "wait"
+        policy= [
+            {
+            "date" : "2014-01-02",
+            "hour" : "09:39",
+            "temperature": (100, 200),
+            "humidity":  (10, 20),
+            "co2":  (1, 2),
+            "brightness": "blue",
+            },
+            {
+                "date" : "2014-01-02",
+                "hour" : "09:39",
+            "temperature": (100, 200),
+            "humidity":  (10, 20),
+            "co2":  (1, 2),
+            "brightness": "white",
+            },
+            ]
+        return {"code": code, "policy": policy}
+    elif request.method == 'POST':
+        mesg = json.loads(request.POST["mesg"])
+        print mesg
+        print mesg["roomId"], mesg["description"]
+        return {"code": 0, "definition": "添加成功"}
+    else:
+        return {"code":-1, "definition": "不是get方法"}
+
+
+@serialize("json")
+def set_policy(request):
+    try:
+        room_id = request.POST["roomId"]
+        policy_id = request.POST["policyId"]
+    except Exception, e:
+        print "//////////////////////////"
+        print e
+        code = -1
+        definition= e
+    else:
+        print room_id, policy_id
+        code = 0
+        definition = "wait"
+        policy= [
+            {
+            "date" : "2014-01-02",
+            "hour" : "09:39",
+            "temperature": (100, 200),
+            "humidity":  (10, 20),
+            "co2":  (1, 2),
+            "brightness": ["blue"],
+            },
+            ]
+    finally:
+        return {"code": code, "definition": definition, "policy": policy}
 # ==========================================================
+
+
+from NodeSite import settings
+import socket
+
+@serialize("json")
+def config_log(request, log_type):
+    address = settings.MIDDLEWARE_ADDRESS
+    port = settings.MIDDLEWARE_PORT
+    print address, port, log_type
+    mesg = {
+        "uri": "config/log/",
+        "type": "request",
+        "data": {
+            "type": log_type,
+        }
+    }
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((address, port))
+    except Exception, e:
+        code = -1
+        definition = e
+        print "Socket Error:", e
+    else:
+        print "connect successfully"
+        mesg_str = json.dumps(mesg)
+        pkg = "HEAD%sEND" % mesg_str
+        print pkg
+        s.send(pkg)
+        s.recv(1024)
+        code = 0
+        definition = "发送成功"
+        s.close()
+    finally:
+        return {"code": code, "definition": definition}
+
+
+@serialize("json")
+def controller_list_view(request, room_id):
+    print "room_id is %s" % room_id
+    code = 0
+    definition = "获取列表成功"
+    data = [
+        {
+            "roomId": room_id,
+            "controllerId": 1,
+            "controllerType": "风机",
+            "state": "on",
+        },
+        {
+            "roomId": room_id,
+            "controllerId": 2,
+            "controllerType": "加湿器",
+            "state": "off",
+        },
+        {
+            "roomId": room_id,
+            "controllerId": 3,
+            "controllerType": "温度控制器",
+            "state": "on",
+        },
+        {
+            "roomId": room_id,
+            "controllerId": 4,
+            "controllerType": "LED控制",
+            "state": "off",
+        },
+        {
+            "roomId": room_id,
+            "controllerId": 100,
+            "controllerType": "采集频率",
+            "state": 1000,
+        },
+        ]
+    return {"code": code, "definition": definition, "context": data}
+
+from django.http import QueryDict
+
+@serialize("json")
+def controller_view(request, controller_id):
+    controller_id = int(controller_id)
+    if controller_id is 100:
+        try:
+            params = QueryDict(request.body, request.encoding)
+            freg = params["freg"]
+        except Exception, e:
+            print e
+        else:
+            print "controller_id is ", controller_id, freg            
+    else:
+        try:
+            params = QueryDict(request.body, request.encoding)
+            action = params["action"]
+        except Exception, e:
+            print e
+        else:
+            print "controller_id is ", controller_id, action
+    code = 0
+    definition = "控制器开启成功"
+    return {"code": code, "definition": definition}
+    
 # test
 def create_playlist(request):
     print request.user.get_all_permissions()

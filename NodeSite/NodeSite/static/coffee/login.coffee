@@ -35,7 +35,7 @@ class Login
         if data.code is "-1"
           @btnEnable()
         else
-          $.publish "#login", [data]
+          $.publish "#login/", [data]
       , () =>
         @btnEnable()
       # 发送信息
@@ -44,6 +44,6 @@ class Login
         "password": password
         "remember": remember
     else
-      $.publish "#echo", [{code: -1, definition: 'Error, who are you?'}]
+      $.publish "#echo/", [{code: -1, definition: 'Error, who are you?'}]
       @btnEnable()
       # alert "Some Error. Who know?"

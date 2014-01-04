@@ -14,13 +14,34 @@ urlpatterns = patterns('',
 )
 
 urlpatterns += patterns('NodeSite.views',
+    # 首页
     url(r'^$', 'home', name='home'),
+    # 用户登录/登出  
     url(r'^login/$', 'login', name='login'),
     url(r'^login-test/$', 'login_test', name="login_test"),
     url(r'^logout/$', 'logout', name='logout'),
-    url(r'^rooms/$', 'get_rooms', name="get_rooms"),
+
+    # 房间信息
+    url(r'^room/list/$', 'get_rooms', name="get_rooms"),
+    url(r'^room/(\d+)/controller/list/$', 'get_room_controller_list',),
+    url(r'^room/(\d+)/controller/(\d+)/$', 'get_room_controller',),
+
+    # 搜索
     url(r'^search/$', 'search', name="search"),
-    url(r'^policy/now/room/(\d+)/$', 'get_now_policy_by_room_id',)
+
+    # 养殖策略
+    url(r'^policy/now/room/(\d+)/$', 'get_now_policy_by_room_id',),
+    url(r'^policy/list/$', 'policy_list',),
+    url(r'^policy/(\d+)/$', 'policy_view',),
+    url(r'^policy/$', 'policy_view'),
+
+    # 控制器
+    url(r'^controller/list/room/(\d+)/$', 'controller_list_view'),
+    url(r'^controller/(\d+)/$', 'controller_view'),
+
+    # 配置文件设置
+    url(r'^config/log/(\w+)$', 'config_log'),
+    
 )
 
 if settings.DEBUG:
