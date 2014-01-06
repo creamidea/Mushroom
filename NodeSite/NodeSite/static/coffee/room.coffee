@@ -220,8 +220,7 @@ class RoomPolicySetter extends Frame
     @modelList = '.model-list'           #list
     @table = 'table'
     @policy= 'tbody'
-    # @$table = $
-    @createPolicyURL = '/policy/'
+    @createPolicyURL = '/policy/' #创建策略的URL
     @listURL = '/policy/list/'
     @policyListTemp = '#policy-list-template'
     @policyInputTemp = "#policy-input-template"
@@ -275,7 +274,7 @@ class RoomPolicySetter extends Frame
       if policy is undefined    #这里表明创建空的东西
         policy = ["hello"]
       html = ""
-      for p in policy
+      for i, p in policy
         {date, hour, brightness, co2, temperature, humidity} = p
         if co2
           [c1, c2] = co2
@@ -318,7 +317,13 @@ class RoomPolicySetter extends Frame
               <option value=white #{white}>白光</option>
               <option value=yellow #{yellow}>黄光</option>
             </select>
-          </td></tr>"
+          </td>
+          <td>
+            <div class=alert alert-warning alert-dismissable>
+              <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
+            </div>
+          </td>
+          </tr>"
       return new Handlebars.SafeString html
     html = template({isModelList: true, policy: policy})
     @$policy.append html

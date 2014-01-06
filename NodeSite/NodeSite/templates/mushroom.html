@@ -27,6 +27,40 @@
         <![endif]-->
 
     <!-- Add your site or application content here -->
+    <!-- <div id="smart-table" class="table"></div>  -->
+    <script id="table-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <nav for="table1" class="table menu">
+        <ul>
+          <li action="add">增加</li>
+        </ul>
+      </nav> 
+      <table id="table1" class="table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" name="" value="" /></th>
+            {{#each thead}}
+            <th>{{name}}</th>
+            {{/each}}
+          </tr>
+        </thead>
+        <tbody class="form-inline">
+          {{#each tbody}}
+          <tr index="{{@index}}">
+            <td><input type="checkbox" /></td>
+            {{#each this}}
+            <td>
+              <p class="hide" key="{{this.key}}">{{this.value}}</p>
+              <input type="{{this.type}}" key="{{this.key}}" value="{{this.value}}" />
+            </td>
+            {{/each}}
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+      <button role="add-row" btn="btn btn-success">增加</button>
+      {% endverbatim %} 
+    </script>
 
     <!-- 提示层 Echo Layer -->
     <ul id="echo-list"></ul>
@@ -240,27 +274,56 @@
       {% endverbatim %} 
     </script>
 
-    <script id="table-template" type="text/x-handlebars-template">
-      {% verbatim %} 
-      <table class="table">
-        <thead>
-          <tr>
-            {{thead}}
-          </tr>
-        </thead>
-        <tbody class="form-inline">
-          {{tbody}}
-        </tbody>
-      </table>
-      {% endverbatim %} 
-    </script>
-
-    
     <script id="policy-input-template" type="text/x-handlebars-template">
       {% verbatim %}
       {{modelList}}
       {% endverbatim%}
     </script>
+
+    <script id="policy-input-template" type="text/x-handlebars-template">
+      {% verbatim %}
+      <tr>
+        <td value=input>
+          <input type=date name=date class=form-control placeholder=间隔天数 value=#{date}> 
+        </td>
+        <td value=input>
+          <input type=time name=time class=form-control placeholder=间隔小时 value=#{hour}> 
+        </td>
+        <td value=input>
+          <input type=number name=co2 class=form-control placeholder=下限 value=#{c1}> 
+        </td>
+        <td value=input>
+          <input type=number name=co2 class=form-control placeholder=上限 value=#{c2}> 
+        </td>
+        <td value=input>
+          <input type=number name=temperature class=form-control placeholder=下限 value=#{t1}> 
+        </td>
+        <td value=input>
+          <input type=number name=temperature class=form-control placeholder=上限 value=#{t2}> 
+        </td>
+        <td value=input>
+          <input type=number name=humidity class=form-control placeholder=下限 value=#{h1}> 
+        </td>
+        <td value=input>
+          <input type=number name=humidity class=form-control placeholder=上限 value=#{h2}> 
+        </td>
+        <td value=select>
+          <select class=form-control name=brightness>
+            <option value=blue #{blue}>蓝光</option>
+            <option value=white #{white}>白光</option>
+            <option value=yellow #{yellow}>黄光</option>
+          </select>
+        </td>
+        <td>
+          <div class=alert alert-warning alert-dismissable>
+            <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
+          </div>
+        </td>
+      </tr>"
+
+      {% endverbatim%}
+    </script>
+    
 
     <script id="policy-setter-template" type="text/x-handlebars-template">
       {% verbatim %} 
@@ -273,15 +336,12 @@
         <table class="table">
           <thead>
             <tr>
-              <th>时间</th>
-              <th>时间</th>
-              <th>二氧化碳范围</th>
-              <th>二氧化碳范围</th>
-              <th>温度范围</th>
-              <th>温度范围</th>
-              <th>湿度范围</th>
-              <th>湿度范围</th>
+              <th colspan=2>时间</th>
+              <th colspan=2>二氧化碳范围</th>
+              <th colspan=2>温度范围</th>
+              <th colspan=2>湿度范围</th>
               <th>光照</th>
+              <th></th>
             </tr>
           </thead>
           <tbody class="form-inline">
