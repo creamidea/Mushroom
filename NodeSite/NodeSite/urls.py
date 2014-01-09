@@ -23,14 +23,18 @@ urlpatterns += patterns('NodeSite.views',
 
     # 房间信息
     url(r'^room/list/$', 'get_rooms', name="get_rooms"),
-    url(r'^room/(\d+)/controller/list/$', 'get_room_controller_list',),
-    url(r'^room/(\d+)/controller/(\d+)/$', 'get_room_controller',),
+    # url(r'^room/(\d+)/controller/list/$', 'get_room_controller_list',),
+    # url(r'^room/(\d+)/controller/(\d+)/$', 'get_room_controller',),
 
+    # 获取数据
+    url(r'^data/room/(\d+)/$', 'get_data'),
+    
     # 搜索
     url(r'^search/$', 'search', name="search"),
 
     # 养殖策略
     url(r'^policy/now/room/(\d+)/$', 'get_now_policy_by_room_id',),
+    url(r'^policy/now/room/(\d+)/timepoint/$', 'get_now_time_point',),
     url(r'^policy/list/$', 'policy_list',),
     url(r'^policy/(\d+)/$', 'policy_view',),
     url(r'^policy/$', 'policy_view'),

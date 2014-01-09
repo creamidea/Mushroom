@@ -55,10 +55,10 @@ def userpackage(user):
         "groupName":"Admin",
         "menu": [
             {"url": "#mushroom", "name": u"蘑菇房"},
-            {"url": "#profile/", "name": u"个人信息"},
-            {"url": "#log/", "name": u"日志"},
-            {"url": "#config/", "name": u"设置"},
-            {"url": "#logout/", "name": u"退出"},
+            {"url": "#profile", "name": u"个人信息"},
+            {"url": "#log", "name": u"日志"},
+            {"url": "#setting", "name": u"设置"},
+            {"url": "#logout", "name": u"退出"},
         ],
         "copyright": "CSLG",
         "version": "v0.0.1",
@@ -210,6 +210,54 @@ def get_rooms(request):
     }]
     return {"code": 0, "definition": "jla;jfklds", "context": context}
 
+@serialize("json")
+def get_data(request, room_id):
+    data = [
+        {
+            "sensorId": 1,
+            "sensorType": "temperature",
+            "position": "上1",
+            "value":
+            (
+                ("2014-01-08 21:08", 100),
+                ("2014-01-08 21:09", 200),
+                ("2014-01-08 21:15", 300),
+            )
+        },
+        {
+            "sensorId": 2,
+            "sensorType": "temperature",
+            "position": "上2",
+            "value":
+            (
+                ("2014-01-08 21:08", 100),
+                ("2014-01-08 21:09", 200),
+                ("2014-01-08 21:15", 300),
+            )
+            # {
+            #     "2014-01-08 21:08": 100,
+            #     "2014-01-08 21:09": 200,
+            #     "2014-01-08 21:15": 300,
+            # }
+        },
+        {
+            "sensorId": 3,
+            "sensorType": "humidity",
+            "position": "上2",
+            "value":
+            (
+                ("2014-01-08 21:08", 100),
+                ("2014-01-08 21:09", 200),
+                ("2014-01-08 21:15", 300),
+            )
+            # {
+            #     "2014-01-08 21:08": 100,
+            #     "2014-01-08 21:09": 200,
+            #     "2014-01-08 21:15": 300,
+            # }
+        },
+    ]
+    return {"code": 0, "data": data}
 
 @serialize("json")
 @require_POST
@@ -241,8 +289,16 @@ def get_now_policy_by_room_id(request, room_id):
         "brightness": ["blue"],
         },
         {
-            "date" : "2013-12-30",
+            "date" : "2013-12-31",
             "hour" : "20:21",
+        "temperature": (100, 200),
+        "humidity": (10,20),
+        "co2":(1,2),
+        "brightness": ["blue"],
+        },
+        {
+            "date" : "2014-01-07",
+            "hour" : "15:00",
         "temperature": (100, 200),
         "humidity": (10,20),
         "co2":(1,2),
@@ -252,6 +308,9 @@ def get_now_policy_by_room_id(request, room_id):
     }
     return {"code": 0, "data": data}
 
+@serialize("json")
+def get_now_time_point(request, room_id):
+    return {"code": 0, "nowPoint": "2014-01-07 15:00"}
 
 @serialize("json")
 def get_room_controller_list(request, room_id):
@@ -316,16 +375,16 @@ def policy_view(request, policy_id=-1):
         definition = "wait"
         policy= [
             {
-            "date" : "2014-01-02",
-            "hour" : "09:39",
+            "date" : "2",
+            "hour" : "2",
             "temperature": (100, 200),
             "humidity":  (10, 20),
             "co2":  (1, 2),
             "brightness": "blue",
             },
             {
-                "date" : "2014-01-02",
-                "hour" : "09:39",
+                "date" : "1",
+                "hour" : "1",
             "temperature": (100, 200),
             "humidity":  (10, 20),
             "co2":  (1, 2),
@@ -335,8 +394,9 @@ def policy_view(request, policy_id=-1):
         return {"code": code, "policy": policy}
     elif request.method == 'POST':
         mesg = json.loads(request.POST["mesg"])
+        # mesg = request.POST
         print mesg
-        print mesg["roomId"], mesg["description"]
+        # print mesg["roomId"], mesg["description"]
         return {"code": 0, "definition": "添加成功"}
     else:
         return {"code":-1, "definition": "不是get方法"}

@@ -203,31 +203,47 @@
         <section>
           <h3>今日数据</h3>
           <ul class="nav nav-tabs">
-            <li class="active"><a href="#room-{{roomId}}-chart" data-toggle="tab">图标</a></li>
+            <li class="active"><a href="#room-{{roomId}}-chart" data-toggle="tab">图表</a></li>
             <li><a href="#room-{{roomId}}-table" data-toggle="tab">表格</a></li>
           </ul>
           <div class="tab-content">
-            <div class="tab-pane active" id="room-{{roomId}}-chart">这里是图标</div>
-            <div class="tab-pane fade" id="room-{{roomId}}-table">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>日期</th>
-                    <th>时间</th>
-                    <th>监控量</th>
-                    <th>范围</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>2013-12-28</td>
-                    <td>15:10</td>
-                    <td>温度</td>
-                    <td>4~6</td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <div class="tab-pane active" id="room-{{roomId}}-chart">这里是图表
+            {{#each sensors}}
+              <div id="room-{{roomId}}-{{sensorType}}-chart" class="chart">{{cnName}}</div> 
+            {{/each}}
             </div>
+
+            <!-- 一下为表格显示数据 -->
+            <div class="tab-pane fade" id="room-{{roomId}}-table">
+            {{#each sensors}}
+            <table id="room-{{roomId}}-{{sensorType}}-table" class="table table-striped">
+              <caption>{{cnName}}</caption>
+              <thead>
+                <tr>
+                  <th>采集时间</th>
+                  <th>采集值</th>
+                  <th>传感器编号</th>
+                  <th>传感器位置</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each data}} {{! this is the set of sensors capture value}}
+                {{#each value}}
+                <tr>
+                  {{#each this}}
+                  <td>{{this}}</td>
+                  {{/each}}
+                  <td>{{../sensorId}}</td>
+                  <td>{{../position}}</td>
+                </tr>
+                {{/each}}
+                {{/each}}
+              </tbody>
+            </table>
+            {{/each}}
+            </div>
+
           </div>
         </section>
       </div> 
@@ -242,20 +258,27 @@
         <table class="table">
           <thead>
             <tr>
-              <th>时间</th>
-              <th>二氧化碳范围</th>
-              <th>温度范围</th>
-              <th>湿度范围</th>
+              <th colspan=2>时间</th>
+              <th colspan=2>二氧化碳范围</th>
+              <th colspan=2>温度范围</th>
+              <th colspan=2>湿度范围</th>
               <th>光色</th>
             </tr>
           </thead>
           <tbody>
             {{#each policy}}
             <tr>
-              <td>{{date}} {{hour}}</td>
-              <td>{{co2}}</td>
-              <td>{{temperature}}</td>
-              <td>{{humidity}}</td>
+              <td>{{date}}</td>
+              <td>{{hour}}</td>
+              {{#each co2}}
+              <td>{{this}}</td>
+              {{/each}}
+              {{#each temperature}}
+              <td>{{this}}</td>
+              {{/each}}
+              {{#each humidity}}
+              <td>{{this}}</td>
+              {{/each}}
               <td brightness="{{brightness}}">{{brightness}}</td>
             </tr>
             {{/each}}
@@ -274,69 +297,22 @@
       {% endverbatim %} 
     </script>
 
-    <script id="policy-input-template" type="text/x-handlebars-template">
-      {% verbatim %}
-      {{modelList}}
-      {% endverbatim%}
-    </script>
-
-    <script id="policy-input-template" type="text/x-handlebars-template">
-      {% verbatim %}
-      <tr>
-        <td value=input>
-          <input type=date name=date class=form-control placeholder=间隔天数 value=#{date}> 
-        </td>
-        <td value=input>
-          <input type=time name=time class=form-control placeholder=间隔小时 value=#{hour}> 
-        </td>
-        <td value=input>
-          <input type=number name=co2 class=form-control placeholder=下限 value=#{c1}> 
-        </td>
-        <td value=input>
-          <input type=number name=co2 class=form-control placeholder=上限 value=#{c2}> 
-        </td>
-        <td value=input>
-          <input type=number name=temperature class=form-control placeholder=下限 value=#{t1}> 
-        </td>
-        <td value=input>
-          <input type=number name=temperature class=form-control placeholder=上限 value=#{t2}> 
-        </td>
-        <td value=input>
-          <input type=number name=humidity class=form-control placeholder=下限 value=#{h1}> 
-        </td>
-        <td value=input>
-          <input type=number name=humidity class=form-control placeholder=上限 value=#{h2}> 
-        </td>
-        <td value=select>
-          <select class=form-control name=brightness>
-            <option value=blue #{blue}>蓝光</option>
-            <option value=white #{white}>白光</option>
-            <option value=yellow #{yellow}>黄光</option>
-          </select>
-        </td>
-        <td>
-          <div class=alert alert-warning alert-dismissable>
-            <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-          </div>
-        </td>
-      </tr>"
-
-      {% endverbatim%}
-    </script>
-    
-
     <script id="policy-setter-template" type="text/x-handlebars-template">
       {% verbatim %} 
       <div id="room-{{roomId}}-policy-setter" class="room-policy setter">
         <h3>设置任务</h3>
         <!-- policy list展示区 -->
-        <ul class="model-list">
-        </ul> 
+        <nav>
+          <h4>模式载入：</h4>
+          <ul class="model-list">
+          </ul> 
+        </nav>
         <!-- policy设置区 -->
         <table class="table">
           <thead>
             <tr>
-              <th colspan=2>时间</th>
+              <th>间隔天数</th>
+              <th>间隔时间</th>
               <th colspan=2>二氧化碳范围</th>
               <th colspan=2>温度范围</th>
               <th colspan=2>湿度范围</th>
@@ -348,14 +324,58 @@
             {{ tbody }}
           </tbody>
         </table>
-        <form class="form-inline" role="form">
-          <input type="text" name="description" value="" placeholder="策略描述"/>
-          <input type="date" name="startDate" value="" />
-          <input type="time" name="startTime" value="" />
-          <button type="submit" class="btn btn-primary" name="submit">提交</button>
+        <form class="form-horizontal" role="form">
+          <input type="text" class="form-control" name="description" placeholder="策略描述"/>
+          <input type="date" class="form-control" name="startDate" />
+          <input type="time" class="form-control" name="startTime" />
+          <button type="submit" class="btn btn-success" name="submit">提交</button>
         </form> 
       </div> 
       {% endverbatim %} 
+    </script>
+    <script id="policy-input-template" type="text/x-handlebars-template">
+      {% verbatim %}
+      <tr index="{{index}}">
+        <td>
+          <input type="number" name="{{index}}-date" class placeholder="间隔天数" value={{date}}> 
+        </td>
+        <td>
+          <input type="number" name="{{index}}-time" class placeholder="间隔小时" value={{hour}}> 
+        </td>
+        <td>
+          <input type="number" name="{{index}}-co2-0" class placeholder="下限" value={{c0}}> 
+        </td>
+        <td>
+          <input type="number" name="{{index}}-co2-1" class placeholder="上限" value={{c1}}> 
+        </td>
+        <td>
+          <input type="number" name="{{index}}-temperature-0" class placeholder="下限" value={{t0}}> 
+        </td>
+        <td>
+          <input type="number" name="{{index}}-temperature-1" class placeholder="上限" value={{t1}}> 
+        </td>
+        <td>
+          <input type="number" name="{{index}}-humidity-0" class placeholder="下限" value={{h0}}> 
+        </td>
+        <td>
+          <input type="number" name="{{index}}-humidity-1" class placeholder="上限" value={{h1}}> 
+        </td>
+        {{#with light}}
+        <td>
+          <select class name="{{index}}-brightness">
+            <option value="blue" {{blue}}>蓝光</option>
+            <option value="white" {{white}}>白光</option>
+            <option value="yellow" {{yellow}}>黄光</option>
+          </select>
+        </td>
+        {{/with}}
+        <td>
+          <!-- <div class="alert alert-dismissable"> -->
+            <button index="{{index}}" type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          <!-- </div> -->
+        </td>
+      </tr>
+      {% endverbatim%}
     </script>
 
     <script id="room-controller-template" type="text/x-handlebars-template">

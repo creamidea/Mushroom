@@ -61,7 +61,9 @@ class Room extends Frame
     if !@env                    #第一次创生
       roomId = @roomId
       @env = new RoomEnv "#room-env-template", roomId
-      @env.renderTo @$el, {roomId: roomId}
+      console.log "@$el:", @$el
+      @env.fetch
+        target: @$el
     else
       @env.show()
     @showElt = @env
@@ -71,11 +73,9 @@ class Room extends Frame
       @showElt.hide()
     if !@policyViewer
       roomId = @roomId
-      @policyViewer = new RoomPolicyViewer "#room-policy-viewer-template", @roomId
-      getPolicy = new Get "/policy/now/room/#{roomId}/", (data) =>
-        @policyViewer.renderTo @$el, data.data
-      getPolicy.send()
-      # @policyViewer.renderTo @$el, @context
+      @policyViewer = new RoomPolicyViewer "#room-policy-viewer-template", roomId
+      @policyViewer.fetch
+        target: @$el
     else
       @policyViewer.show()
     @showElt = @policyViewer
@@ -191,26 +191,172 @@ class RoomThumbnail extends Frame
 class RoomEnv extends Frame
   constructor: (@templateName, @roomId) ->
     super(@templateName)
+    @url = "/data/room/#{@roomId}/"
+  fetch: (option)->
+    {target} = option
+    url = @url
+    console.log "target:", target
+    get = new Get url, (data) =>
+      @renderTo target, data.data
+      console.log data
+    get.send()
+      
   renderTo: (target, context) ->
-    super(target, context)
+    helper = ->
+      # console.log this
+      # alert "hel"
+      {roomId, context} = @
+      tds = {}
+      # value = context
+      # console.log "value: ", value
+      for value in context
+        for time, record of value
+          # key 是时间
+          # record 是采集值
+          console.log time, record
+          if tds[time]
+            tds[time] = tds[time] + "<td>#{record}</td>"
+          else
+            tds[time] = "<td>#{record}</td>"
+      console.log tds
+      html = ""
+      for time, record of tds
+        html += ""
+      return new Handlebars.SafeString html
+    # console.log context
+    sensors = {}
+    cnName =
+      "temperature": "温度"
+      "humidity": "湿度"
+      "co2": "二氧化碳"
+    roomId = @roomId
+    for record, index in context
+      console.log record, index
+      sensorType = record.sensorType
+      if sensors[sensorType]
+        sensors[sensorType].data.push
+          value: record.value
+          sensorId: record.sensorId
+          position: record.position
+      else
+        temp = {}
+        temp["roomId"] = roomId
+        temp["sensorType"] = sensorType
+        temp["cnName"] = cnName[sensorType]
+        temp["data"] = [{
+          value: record.value
+          sensorId: record.sensorId
+          position: record.position
+        }]
+        sensors[sensorType] = temp
+    console.log "sensors", sensors
+    super(target, {roomId: @roomId, sensors: sensors})
 
 class RoomPolicyViewer extends Frame
   constructor: (@templateName, @roomId) ->
     super(@templateName)
-    @timeline = '.timeline'
+    @timelineId = '.timeline'
     @table = 'table'
+  fetch: (option) ->
+    {target} = option
+    getPolicy = new Get "/policy/now/room/#{@roomId}/", (data) =>
+      if data.code
+        window.hint(data)
+      else
+        console.log data
+        @renderTo target, data.data
+    getPolicy.send()
   renderTo: (target, context) ->
-    console.log "Room Policy Viewer:", context
+    # console.log "Room Policy Viewer:", context
     super(target, context)
-    @$timeline = @$el.find(@timeline)
+    
+    @$timeline = @$el.find(@timelineId)
     @$table = @$el.find(@table)
     viewerHeight = @$el.height() #获得总的高度
     tableHeight = @$table.height() #获得实际表格的高度
     tbodyHeight =  @$table.find('tbody').height() #获得表格中数据区的高度
     tdHeight = @$table.find('tbody').find('tr').height() #获得每一个td的高度
-    startPosition = viewerHeight - tbodyHeight           #计算时间线出现的位置
-    next = startPosition + tdHeight                      #计算下一个出现的位置
-    @$timeline.css('top', "#{next}px")                   #显示时间线
+    startHeight = viewerHeight - tbodyHeight           #计算时间线出现的位置
+
+    timeline = new TimeLine
+      $el: @$timeline
+      startHeight: startHeight
+      unitHeight: tdHeight
+      context: context.policy
+      roomId: @roomId
+    timeline.render()
+
+class TimeLine
+  constructor: (option) ->
+    # @startHeigh 为所在元素的开始的高度，不是时间线开始的高度
+    # @nowPoint 现在的时间点，故为point
+    {@$el, @startHeight, @unitHeight, @context, @roomId} = option
+    
+    # 这个用于放时间和位置的映射关系，故名为time pool
+    context = @context
+    timepool = {}
+    for ct, index in context
+      key = "#{ct.date} #{ct.hour}"
+      timepool[key] = index
+    @timepool = timepool
+
+    @nowHeight = @startHeight    #初始化高度，这个值用于指向现在的高度
+    @updateInterval = 60000       #1000 * 60 = 60000
+    @url = "policy/now/room/#{@roomId}/timepoint/"
+
+    @update()                   #启动自我更新
+    
+  getPos: (nowPoint) ->
+    if nowPoint
+      nowPos = @timepool[nowPoint]
+    else
+      nowPos = @nowPos || 0
+    return nowPos
+    
+  getHeight: (nowPos) ->
+    nowPos = nowPos || 0
+    height = nowPos * @unitHeight + @startHeight
+    # console.log @startHeight, nowPos, height
+    return height
+    
+  next: () ->
+    @nowPos += 1
+    @nowHeight = parseInt(@nowHeight, 10) + parseInt(@unitHeight, 10)
+    
+  render: (nowHeight) ->
+    if nowHeight
+      top = nowHeight || @nowHeight
+    else
+      top = @nowHeight
+    @$el.css('top', "#{top}px")
+    
+  update: () ->
+    updateInterval = @updateInterval
+    url = @url
+    getPoint = new Get url, (data) =>
+      if data.code is 0
+        nowSysTime = data.nowPoint
+        nowPos = @getPos(nowSysTime)
+        if nowPos
+          nowHeight = @getHeight(nowPos)
+          @render(nowHeight)
+      else
+        window.hint(data)
+    @timer = setInterval =>
+      getPoint.send()
+
+      # 以下为自动更新，不与服务器同步
+      # now = new Date()
+      # month = now.getMonth()+1
+      # nowSysTime = "#{now.getFullYear()}-#{month}-#{now.getDay()} #{now.getHours()}:#{now.getMinutes()}"
+      # nowSysTime = "2014-01-07 15:00"
+      # nowPos = @getPos(nowSysTime)
+      # if nowPos
+      #   nowHeight = @getHeight(nowPos)
+      #   @render(nowHeight)
+        # @next()
+        # @render()
+    , updateInterval
 
 class RoomPolicySetter extends Frame
   
@@ -219,12 +365,13 @@ class RoomPolicySetter extends Frame
     super(@templateName)
     @modelList = '.model-list'           #list
     @table = 'table'
-    @policy= 'tbody'
+    @policy = 'tbody'
     @createPolicyURL = '/policy/' #创建策略的URL
     @listURL = '/policy/list/'
     @policyListTemp = '#policy-list-template'
     @policyInputTemp = "#policy-input-template"
     @tableTemp = '#table-template'
+    @context = []
   renderTo: (target) ->
     policyInputTemp = @policyInputTemp
     # 初始窗口创建
@@ -233,10 +380,61 @@ class RoomPolicySetter extends Frame
       html = Handlebars.compile(source)({})
       return new Handlebars.SafeString html
     super(target, {roomId: @roomId}, {tag: "tbody", fun: helper})
-    @$table = @$el.find(@table)
+    $table = @$table = @$el.find(@table)
     @$policy = @$table.find(@policy)
     @createPolicyList()
     @createPolicy()
+    
+    $table.delegate "td input", "focusout", (e) =>
+      # alert "focusout"
+      $input = $(e.target)
+      [index, key, pos] = $input.attr("name").split("-")
+      value = $input.val()
+      if index and key and value
+        if pos                    #说明是范围
+          # alert "#{key} #{pos} #{value}"
+          @context[index][key][pos] = value
+        else
+          # alert "#{key} #{value}"
+          @context[index][key] = value
+
+    $table.delegate "td select", "focusout", (e) =>
+      $input = $(e.target)
+      [index, key] = $input.attr("name").split("-")
+      value = $input.val()
+      if index and key and value
+        @context[index][key] = value
+      
+    $table.delegate "td button", "click", (e) =>
+      # delete a row
+      answer = confirm("你确定删除么？")
+      if answer
+        $btn = $(e.target)
+        index = $btn.attr("index")
+        delete @context[index]
+        @$table.find("tr[index=#{index}]").remove()
+        console.log @context
+
+    $submit = @$el.find("button[type=submit]")
+    $submit.unbind "click"
+    $submit.click (e) =>
+      e.preventDefault()
+      console.log @context
+      mesg = {}
+      description =  @$el.find("input[name=description]").val()
+      startDate = @$el.find("input[name=startDate]").val()
+      startTime = @$el.find("input[name=startTime]").val()
+      policy = @context
+      policy.pop() #移出最后一个空的
+      if policy.length > 0
+        mesg["policy"] = policy
+        mesg["roomId"] = @roomId
+        mesg["description"] = description
+        mesg["startat"] = "#{startDate} #{startTime}"
+        post = new Post @createPolicyURL, (data) ->
+          $.publish "#echo/", [data]
+        post.send({mesg: JSON.stringify mesg})
+    
   createPolicyList: () ->
     # #获取养殖策略的简要信息
     get = new Get @listURL, (mesg) =>
@@ -258,116 +456,86 @@ class RoomPolicySetter extends Frame
               if mesg.code is 0
                 @createPolicy(mesg.policy)
               else
-                $.publish "#echo/", mesg
+                $.publish "#echo/", [mesg]
             g.send()
       else
         $.publish "#echo/", [mesg]
     get.send()
+    
   createPolicy: (policy) ->
     if @$policy
       @$policy.children().remove()
+    @context = policy || []
+    if policy
+      policyNum = policy.length
+    else
+      policyNum = 0
+    # 仕方ない
+    nullRow =
+      temperature: []
+      humidity: []
+      co2: []
+      
     source = $(@policyInputTemp).html()
+    # console.log source
     template = Handlebars.compile(source)
-    Handlebars.registerHelper "modelList", ->
-      # console.log this
-      policy = @policy
-      if policy is undefined    #这里表明创建空的东西
-        policy = ["hello"]
-      html = ""
-      for i, p in policy
-        {date, hour, brightness, co2, temperature, humidity} = p
-        if co2
-          [c1, c2] = co2
-        if temperature
-          [t1, t2] = temperature
-        if humidity
-          [h1, h2] = humidity
-        light = {}
-        light[brightness] = "selected"
-        {blue, white, yellow} = light
-        html += "
-          <tr>
-          <td value=input>
-            <input type=date name=date class=form-control placeholder=间隔天数 value=#{date}> 
-          </td>
-          <td value=input>
-            <input type=time name=time class=form-control placeholder=间隔小时 value=#{hour}> 
-          </td>
-          <td value=input>
-            <input type=number name=co2 class=form-control placeholder=下限 value=#{c1}> 
-          </td>
-          <td value=input>
-            <input type=number name=co2 class=form-control placeholder=上限 value=#{c2}> 
-          </td>
-          <td value=input>
-            <input type=number name=temperature class=form-control placeholder=下限 value=#{t1}> 
-          </td>
-          <td value=input>
-            <input type=number name=temperature class=form-control placeholder=上限 value=#{t2}> 
-          </td>
-          <td value=input>
-            <input type=number name=humidity class=form-control placeholder=下限 value=#{h1}> 
-          </td>
-          <td value=input>
-            <input type=number name=humidity class=form-control placeholder=上限 value=#{h2}> 
-          </td>
-          <td value=select>
-            <select class=form-control name=brightness>
-              <option value=blue #{blue}>蓝光</option>
-              <option value=white #{white}>白光</option>
-              <option value=yellow #{yellow}>黄光</option>
-            </select>
-          </td>
-          <td>
-            <div class=alert alert-warning alert-dismissable>
-              <button type=button class=close data-dismiss=alert aria-hidden=true>&times;</button>
-            </div>
-          </td>
-          </tr>"
-      return new Handlebars.SafeString html
-    html = template({isModelList: true, policy: policy})
-    @$policy.append html
-    
-    $submit = @$el.find("button[type=submit]")
-    $submit.unbind "click"
-    $submit.click (e) =>
-      e.preventDefault()
-      alert "hello"
-      mesg = {}
-      policy = []
-      @$policy.children().each (index, tr) =>
-        p =
-          co2: []
-          temperature: []
-          humidity: []
-        $(tr).children().each (index, td) =>
-          childElt = $(td).attr("value")
-          if childElt is "input"
-            $input = $(td).find("input")
-            name = $input.attr("name")
+    html = ""
+    console.log policy
+    for i, p of policy
+      {date, hour, brightness, co2, temperature, humidity} = p
+      if co2
+        [c0, c1] = co2
+      if temperature
+        [t0, t1] = temperature
+      if humidity
+        [h0, h1] = humidity
+      light = {}
+      light[brightness] = "selected"
+      {blue, white, yellow} = light
+      html += template({index:i, date: date, hour: hour, c0: c0, c1: c1, t0: t0, t1: t1, h0: h0, h1:h1, light: light})
+    # console.log html
+    lastRow = template({index: policyNum, light: {}})        #创建空的一行
+    console.log @context
+    @context.push nullRow
+    html += lastRow
+    @$policy.append $(html)
+
+    $table = @$table
+    # The last row event
+    $lastRow = @$table.find("tbody tr:last-child")
+    $children = $lastRow.children()
+    $children.last().find(".close").hide()
+    len = $children.length
+    counter = 0
+    # 这里全部会产生闭包，不知道会怎么样
+    $lastRow.delegate "td", "focusout", (e) =>
+      $nowElt = $(e.target)
+      [index, key] = $nowElt.attr("name").split('-')
+      if key is "brightness" #说明是最后一个
+
+        $lastRow.children().each (index, elt) =>
+          $input = $(elt).find("input")
+
+          name = $input.attr("name")
+          # alert "name:" + name
+          if name
+            [key, pos] = name.slice(1).split('-')
             value = $input.val()
-            if name in ["date", "time"]
-              p[name] = value
-            else if name in ["co2", "temperature", "humidity"]
-              p[name].push value
-          else if childElt is "select"
-            $select = $(td).find("select option:selected")
-            name = $select.parent().attr("name")
-            value = $select.val()
-            p[name] = value
-        policy.push p
-      mesg["policy"] = policy
-      mesg["roomId"] = @roomId
-      description =  @$el.find("input[name=description]").val()
-      startDate = @$el.find("input[name=startDate]").val()
-      startTime = @$el.find("input[name=startTime]").val()
-      mesg["description"] = description
-      mesg["startat"] = "#{startDate} #{startTime}"
-      post = new Post @createPolicyURL, (data) ->
-        $.publish "#echo/", [data]
-      post.send({mesg: JSON.stringify mesg})
-      console.log "mesg", JSON.stringify mesg
-          
+            # alert "value: " + value
+            if value
+              counter++       #用于检测是否全部填充完毕
+        # alert counter
+        if counter is len - 2 #去掉td close
+          counter = 0         #计数器清零
+          console.log @context
+          @context.push(nullRow) #推进一个空的对象
+          _$lastRow = $lastRow.clone()
+          index = $lastRow.attr("index")
+          $lastRow.attr("index", parseInt(index, 10)+1)
+          _$lastRow.insertBefore($lastRow)
+          _$lastRow.children().find(".close").show()
+          console.log @context
+
 class RoomController extends Frame
   constructor: (@templateName, @roomId) ->
     super(@templateName)

@@ -359,6 +359,11 @@ test {
                     h3 {
                         .room-band(#ff6969);
                     }
+                    table {
+                        th, td, td input {
+                            text-align: center;
+                        }
+                    }
                     .timeline {
                         border: 2px solid #ff6969;
                         position: absolute;
@@ -371,6 +376,44 @@ test {
                 &.setter {
                     h3 {
                         .room-band(#24A0DA);
+                    }
+                    nav {
+                        background: #e5ebe4;
+                    }
+                    .model-list {
+                        /* background: #e5ebe4; */
+                        overflow: auto;
+                        padding: 0;
+                        li {
+                            float: left;
+                            margin: auto 4%;
+                        }
+                    }
+                    table {
+                        th, td input {
+                            text-align: center;
+                        }
+                        tbody {
+                            tr {
+                                input {
+                                    width: 112%;
+                                }
+                                &:last-child {
+                                    background-color: #ff6969;
+                                }
+                            }
+                        }
+                    }
+                    form {
+                        width: 32%;
+                        margin: auto;
+
+                        button {
+                            width: 64%;
+                            margin: auto 22%;
+                            margin-top: 10%;
+                            margin-bottom: 10%;
+                        }
                     }
                 } /*room policy setter*/
                 td[brightness] {
