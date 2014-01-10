@@ -41,10 +41,16 @@ class Room extends Frame
     $.subscribe "#policy/viewer/room/#{roomId}/", $.proxy(@viewPolicy, this)
     $.subscribe "#policy/setter/room/#{roomId}/", $.proxy(@setPolicy, this)
     $.subscribe "#controller/room/#{roomId}/", $.proxy(@controllerHandle, this)
-
+    # $.subscribe "#data/room/#{roomId}/", $.proxy(@dataHandle, this)
+    # $.subscribe "#policy/viewer/room/#{roomId}/", $.proxy(@viewPolicy, this)
+    # $.subscribe "#policy/setter/room/#{roomId}/", $.proxy(@setPolicy, this)
+    # $.subscribe "#controller/room/#{roomId}/", $.proxy(@controllerHandle, this)
+    # 
     @templateName = templateName
     @roomId = roomId
-    
+
+  handler: (e) ->
+      
   hideElt: (elt) ->
     if elt
       elt.hide
@@ -54,14 +60,15 @@ class Room extends Frame
       @policySetter.hide()
       @controller.hide()
       
-  dataHandle: ->
+  dataHandle: (e)->
     console.log arguments
+    type = e.type
     if @showElt
       @showElt.hide()
     if !@env                    #第一次创生
       roomId = @roomId
       @env = new RoomEnv "#room-env-template", roomId
-      console.log "@$el:", @$el
+      # console.log "@$el:", @$el
       @env.fetch
         target: @$el
     else
@@ -110,15 +117,16 @@ class Room extends Frame
     @roomThumbnail.renderTo @$el, context
 
 class RoomThumbnail extends Frame
+  
   constructor: (@templateName, @roomId) ->
     super(@templateName)
     # 初始化一些变量，后期会提供修改接口
     @nav = "nav.room-menu>ul"
     @card = ".card"
     @brightness = ".room-light"
-    @roomName = ".room-name"
+    @roomNameInput = "input.room-name"
     # @inputRoomName = "input[name=roomName]"
-    @plantName = ".plant-name"
+    @plantNameInput = "input.plant-name"
     # @inputPlantName = "input[name=plantName]"
     @searchForm = ".room-search>form"
     @searchURI = "/search/"
@@ -134,11 +142,44 @@ class RoomThumbnail extends Frame
     $el = @$el
     # find = $el.find
     # console.log find
-    @$roomName = $el.find(@roomName)
-    @$plantName = $el.find(@plantName)
+    $roomNameInput = $el.find(@roomNameInput)
+    $plantNameInput = $el.find(@plantNameInput)
     @$cards = $el.find(@card)   #保存上面需要实时跟新的信息：温度，湿度，co2
     @$brightness = $el.find(@brightness)
+
+    # 修改房间和植物的名称
+    $roomBasic = $el.find(".first-card")
+    $roomBasic.delegate "input", "blur", (e) ->
+      $input = $(this)
+      $label = $input.prev()
+      preValue = $label.text()
+      value = $input.val()
+      if preValue is value
+          $label.removeClass("hide")
+          $input.addClass("hide")
+      else
+        [prefix, id, key] = $input.attr("id").split("-")
+        if key is "roomName"
+          url = "/room/#{id}/name/"
+        else if key is "plantName"
+          url = "/plant/#{id}/name/"
+        put = new Put url, (data) ->
+          if data.code is 0
+            $label.text value
+            $label.removeClass("hide")
+            $input.addClass("hide")
+          window.hint(data)
+        put.send
+          name: value
+    $roomBasic.delegate "label", "dblclick", (e) ->
+      $label = $(this)
+      $input = $label.next()
+      $input.removeClass("hide")
+      $input.focus()
+      $label.addClass("hide")
+
     @submit()                   #启动提交事件监听
+    
     # @update(testRoomUpdate)
   update: (context) ->
     roomName = context.roomName
@@ -169,7 +210,7 @@ class RoomThumbnail extends Frame
     $endDate = $form.find("input[name=end-date]")
     $form.submit (e) =>
       e.preventDefault()
-      console.log e
+      # console.log e
       sensor = $sensor.val()
       startDate = $startDate.val()
       endDate = $endDate.val()
@@ -183,10 +224,10 @@ class RoomThumbnail extends Frame
       # alert "#{sensor}:#{startDate}:#{endDate}"
   search: (context)->
     # console.log "context", context
-    searchPost = new Post @searchURI, (data) ->
+    searchGet = new Get @searchURI, (data) ->
       $.publish "#search/finish/", [data]
       # alert data.data
-    searchPost.send(context)
+    searchGet.send(context)
 
 class RoomEnv extends Frame
   constructor: (@templateName, @roomId) ->
@@ -195,10 +236,10 @@ class RoomEnv extends Frame
   fetch: (option)->
     {target} = option
     url = @url
-    console.log "target:", target
+    # console.log "target:", target
     get = new Get url, (data) =>
       @renderTo target, data.data
-      console.log data
+      # console.log data
     get.send()
       
   renderTo: (target, context) ->
@@ -213,12 +254,12 @@ class RoomEnv extends Frame
         for time, record of value
           # key 是时间
           # record 是采集值
-          console.log time, record
+          # console.log time, record
           if tds[time]
             tds[time] = tds[time] + "<td>#{record}</td>"
           else
             tds[time] = "<td>#{record}</td>"
-      console.log tds
+      # console.log tds
       html = ""
       for time, record of tds
         html += ""
@@ -231,7 +272,7 @@ class RoomEnv extends Frame
       "co2": "二氧化碳"
     roomId = @roomId
     for record, index in context
-      console.log record, index
+      # console.log record, index
       sensorType = record.sensorType
       if sensors[sensorType]
         sensors[sensorType].data.push
@@ -249,7 +290,7 @@ class RoomEnv extends Frame
           position: record.position
         }]
         sensors[sensorType] = temp
-    console.log "sensors", sensors
+    # console.log "sensors", sensors
     super(target, {roomId: @roomId, sensors: sensors})
 
 class RoomPolicyViewer extends Frame
@@ -263,7 +304,7 @@ class RoomPolicyViewer extends Frame
       if data.code
         window.hint(data)
       else
-        console.log data
+        # console.log data
         @renderTo target, data.data
     getPolicy.send()
   renderTo: (target, context) ->
@@ -371,7 +412,7 @@ class RoomPolicySetter extends Frame
     @policyListTemp = '#policy-list-template'
     @policyInputTemp = "#policy-input-template"
     @tableTemp = '#table-template'
-    @context = []
+    @context = []               #用于记录policy
   renderTo: (target) ->
     policyInputTemp = @policyInputTemp
     # 初始窗口创建
@@ -388,8 +429,10 @@ class RoomPolicySetter extends Frame
     $table.delegate "td input", "focusout", (e) =>
       # alert "focusout"
       $input = $(e.target)
-      [index, key, pos] = $input.attr("name").split("-")
+      index = $input.parent().parent().attr("index")
+      [key, pos] = $input.attr("name").split("-")
       value = $input.val()
+      # console.log "td input index:", index
       if index and key and value
         if pos                    #说明是范围
           # alert "#{key} #{pos} #{value}"
@@ -399,47 +442,71 @@ class RoomPolicySetter extends Frame
           @context[index][key] = value
 
     $table.delegate "td select", "focusout", (e) =>
-      $input = $(e.target)
-      [index, key] = $input.attr("name").split("-")
-      value = $input.val()
-      if index and key and value
+      $select = $(e.target)
+      $parent = $select.parent()
+      # 获得最后一个close button的css样式，如果是none则说明是最后一个
+      display = $parent.next().find("button.close").css("display")
+      index = $parent.parent().attr("index")
+      key = $select.attr("name")
+      # value = $select.val()
+      # alert "se"
+      console.log "////////", @context
+      if index and key
+        $nowSelect = $select.find("option:selected")
+        value = $nowSelect.val()
+        $select.children().each ->
+          $(this).removeAttr("selected")
+        $nowSelect.attr("selected", true)
+        # alert value
+        if display is "none"
+          index = index - 1     #用于减去下面createPolicy而产生的+1
+        console.log index, key, value
         @context[index][key] = value
+        
       
     $table.delegate "td button", "click", (e) =>
       # delete a row
       answer = confirm("你确定删除么？")
       if answer
         $btn = $(e.target)
-        index = $btn.attr("index")
-        delete @context[index]
-        @$table.find("tr[index=#{index}]").remove()
-        console.log @context
+        index = $btn.parent().parent().attr("index")
+        if index
+          # alert index
+          @$table.find("tr[index=#{index}]").remove()
+          delete @context[index]
+        # console.log @context
 
     $submit = @$el.find("button[type=submit]")
     $submit.unbind "click"
     $submit.click (e) =>
       e.preventDefault()
-      console.log @context
+      # console.log @context
       mesg = {}
       description =  @$el.find("input[name=description]").val()
       startDate = @$el.find("input[name=startDate]").val()
       startTime = @$el.find("input[name=startTime]").val()
       policy = @context
-      policy.pop() #移出最后一个空的
-      if policy.length > 0
-        mesg["policy"] = policy
+      _policy = []              #用于发送到policy
+      for key, value of policy
+        _policy.push value
+      _policy.pop() # policy #移出最后一个空的
+      # console.log "send policy:", _policy, _policy.length
+      if _policy.length > 0
+        mesg["policy"] = _policy
         mesg["roomId"] = @roomId
         mesg["description"] = description
         mesg["startat"] = "#{startDate} #{startTime}"
         post = new Post @createPolicyURL, (data) ->
-          $.publish "#echo/", [data]
+          window.hint(data)
         post.send({mesg: JSON.stringify mesg})
+      else
+        window.hint {definition: "没有什么可以提交的"}
     
   createPolicyList: () ->
     # #获取养殖策略的简要信息
     get = new Get @listURL, (mesg) =>
       # 用于获取所有policy的简要信息
-      console.log mesg
+      # console.log mesg
       if mesg.code is 0
         @$modelList = @$el.find(@modelList)
         list = new Frame @policyListTemp
@@ -456,25 +523,25 @@ class RoomPolicySetter extends Frame
               if mesg.code is 0
                 @createPolicy(mesg.policy)
               else
-                $.publish "#echo/", [mesg]
+                window.hint(mesg)
+                # $.publish "#echo/", [mesg]
             g.send()
       else
-        $.publish "#echo/", [mesg]
+        window.hint(mesg)
+        # $.publish "#echo/", [mesg]
     get.send()
     
   createPolicy: (policy) ->
+    console.log "policy:", policy
+    # 清零，初始化
+    context = {}
     if @$policy
       @$policy.children().remove()
-    @context = policy || []
+    
     if policy
       policyNum = policy.length
     else
       policyNum = 0
-    # 仕方ない
-    nullRow =
-      temperature: []
-      humidity: []
-      co2: []
       
     source = $(@policyInputTemp).html()
     # console.log source
@@ -482,6 +549,7 @@ class RoomPolicySetter extends Frame
     html = ""
     console.log policy
     for i, p of policy
+      context[i] = p            #将数组policy转为对象context
       {date, hour, brightness, co2, temperature, humidity} = p
       if co2
         [c0, c1] = co2
@@ -495,46 +563,78 @@ class RoomPolicySetter extends Frame
       html += template({index:i, date: date, hour: hour, c0: c0, c1: c1, t0: t0, t1: t1, h0: h0, h1:h1, light: light})
     # console.log html
     lastRow = template({index: policyNum, light: {}})        #创建空的一行
+    @context = context
     console.log @context
-    @context.push nullRow
+    # @context.push nullRow
     html += lastRow
     @$policy.append $(html)
-
+    # context[pos] = []
+    context[policyNum] = 
+      # 仕方ない
+      data: ""
+      hour: ""
+      temperature: []
+      humidity: []
+      co2: []
+      brightness: ""
+      
     $table = @$table
     # The last row event
     $lastRow = @$table.find("tbody tr:last-child")
     $children = $lastRow.children()
     $children.last().find(".close").hide()
     len = $children.length
-    counter = 0
+    counter = 0                 #用于计数最后一行每个input的计数
     # 这里全部会产生闭包，不知道会怎么样
     $lastRow.delegate "td", "focusout", (e) =>
-      $nowElt = $(e.target)
-      [index, key] = $nowElt.attr("name").split('-')
+      $nowElt = $(e.target)     #here is the td
+      # $nowElt.attr("selected", true)
+      key = $nowElt.attr("name")
       if key is "brightness" #说明是最后一个
 
         $lastRow.children().each (index, elt) =>
           $input = $(elt).find("input")
+          value = $input.val()
+          if value
+            counter++       #用于检测是否全部填充完毕
 
-          name = $input.attr("name")
-          # alert "name:" + name
-          if name
-            [key, pos] = name.slice(1).split('-')
-            value = $input.val()
-            # alert "value: " + value
-            if value
-              counter++       #用于检测是否全部填充完毕
-        # alert counter
-        if counter is len - 2 #去掉td close
+        counter = 8
+        if counter is len - 2 #去掉td close & td select
+          # 这里是增加一行的具体操作
+          # 向context中增加
+          # 在页面上增加一行
           counter = 0         #计数器清零
           console.log @context
-          @context.push(nullRow) #推进一个空的对象
+          context = @context
+          # @context.push(nullRow) #推进一个空的对象
           _$lastRow = $lastRow.clone()
-          index = $lastRow.attr("index")
-          $lastRow.attr("index", parseInt(index, 10)+1)
+          # policyNum += policyNum #这里需要递增，以免避免重复
           _$lastRow.insertBefore($lastRow)
+
+          lightColor = $lastRow.find("select option:selected").val()
+          # console.log lightColor, 
+          _$lastRow.find("select option[value=#{lightColor}]").attr("selected", true)
+           
+          # alert $select
+          # $nowSelect = $select.find("option:selected")
+          # $select.children().each ->
+          #   $(this).removeAttr("selected")
+          # $nowSelect.attr("selected", true)
           _$lastRow.children().find(".close").show()
+          
+          policyNum += 1
+          # console.log policyNum
+          $lastRow.attr("index", policyNum)
+          context[policyNum] = 
+            # 仕方ない
+            data: ""
+            hour: ""
+            temperature: []
+            humidity: []
+            co2: []
+            brightness: ""
           console.log @context
+          # alert policyNum
 
 class RoomController extends Frame
   constructor: (@templateName, @roomId) ->

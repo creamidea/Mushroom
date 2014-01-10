@@ -260,14 +260,12 @@ def get_data(request, room_id):
     return {"code": 0, "data": data}
 
 @serialize("json")
-@require_POST
 def search(request):
-    print request.POST
-    post = request.POST
-    room_id = post["roomId"]
-    sensor_id = post["sensorId"]
-    start_date = post["startDate"]
-    end_date = post["endDate"]
+    get = request.GET
+    room_id = get["roomId"]
+    sensor_id = get["sensorId"]
+    start_date = get["startDate"]
+    end_date = get["endDate"]
     print room_id, sensor_id, start_date, end_date
     return {"code": 0, "data": "wait"}
 
@@ -451,7 +449,7 @@ def config_log(request, log_type):
         s.connect((address, port))
     except Exception, e:
         code = -1
-        definition = e
+        definition = "远程通信失败"
         print "Socket Error:", e
     else:
         print "connect successfully"
@@ -530,6 +528,25 @@ def controller_view(request, controller_id):
     code = 0
     definition = "控制器开启成功"
     return {"code": code, "definition": definition}
+
+@serialize("json")
+def update_name(request, key=None, ID=-1):
+    if key in ["room", "plant"]:
+        try:
+            params = QueryDict(request.body, request.encoding)
+            name = params["name"]
+        except Example, e:
+            print e
+            definition = "修改名称失败"
+            code = -1
+        else:
+            print key, ID, name
+            definition = "成功修改名称"
+            code = 0
+    else:
+        code = -1
+        definition= "I don't know"
+    return {"code": 0, "definition": definition}
     
 # test
 def create_playlist(request):

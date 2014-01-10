@@ -326,6 +326,7 @@ PIPELINE_JS = {
             'coffee/login.coffee',
             'coffee/room.coffee',
             'coffee/sidebar.coffee',
+            'coffee/setting.coffee',
         ),
         'output_filename': 'js/components.js',
     },

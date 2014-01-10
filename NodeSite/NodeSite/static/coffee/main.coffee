@@ -32,6 +32,7 @@ $ ->
     
     sidebar = new Sidebar "#sidebar-template"
     roomList = new RoomList "#room-list"
+    settingPanel = undefined
     nowShowElt = ""             #现在正在展示的元素，是控制sidebar的
 
     context = data.definition
@@ -41,7 +42,6 @@ $ ->
 
     # console.log context
     sidebar.renderTo "#sidebar", context
-    # sidebar.hide()
 
     # 房间信息
     # roomList.fetch()
@@ -49,29 +49,33 @@ $ ->
     nowShowElt = roomList
     # roomList.hide()
 
-
-    # 监听配置
-    # $config = $('#config form')
-    # $config.submit (e) ->
-    #   e.preventDefault()
-    #   type = $config.find('select option:selected').val()
-    #   # alert type
-    #   get = new Get "/config/log/#{type}", (data) ->
-    #     $.publish "#echo/", [data]
-    #   get.send()
-
-    $.subscribe "#setting", (e) ->
-      alert "setting"
-      if nowShowElt
-        nowShowElt.hide()
-      # roomList.hide()
-      
     $.subscribe "#mushroom", (e) ->
       if nowShowElt
         nowShowElt.hide()
       roomList.show()
       nowShowElt = roomList
+      
+    $.subscribe "#profile", (e) ->
+      if nowShowElt
+        nowShowElt.hide()
+      nowShowElt = ""
 
+    $.subscribe "#log", (e) ->
+      if nowShowElt
+        nowShowElt.hide()
+      nowShowElt = ""
+
+    $.subscribe "#setting", (e) ->
+      if nowShowElt
+        nowShowElt.hide()
+      # roomList.hide()
+      if settingPanel
+        settingPanel.show()
+      else
+        settingPanel = new SettingPanel
+        settingPanel.render()
+      nowShowElt = settingPanel
+      
   # TODO: 应该使用路由，后期需要整改  
   $.subscribe "#logout", (e) ->
     # alert "logout"

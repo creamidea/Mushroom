@@ -21,6 +21,9 @@ urlpatterns += patterns('NodeSite.views',
     url(r'^login-test/$', 'login_test', name="login_test"),
     url(r'^logout/$', 'logout', name='logout'),
 
+    # 修改名称
+    url(r'^([\w]+)/(\d+)/name/$', 'update_name',),
+
     # 房间信息
     url(r'^room/list/$', 'get_rooms', name="get_rooms"),
     # url(r'^room/(\d+)/controller/list/$', 'get_room_controller_list',),

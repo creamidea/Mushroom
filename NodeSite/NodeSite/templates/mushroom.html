@@ -148,11 +148,12 @@
       {% verbatim %} 
       <div id="room-{{roomId}}-thumbnail" class="room-thumbnail">
         <div class="up">
-          <div id="room-basic" class="card first-card">
+          <div id="room-{{roomId}}-basic" class="card first-card">
             <label id="room-{{roomId}}-roomName" class="lt room-name" for="room-{{roomId}}-roomName">{{roomName}}</label>
-            <!-- <input id="room-{{roomId}}-roomName" type="text" name="roomName" value="" /> -->
+            <input id="room-{{roomId}}-roomName" class="lt room-name hide" type="text" name="roomName" value="{{roomName}}" />
             <label id="plant-{{plantId}}-plantName" class="rb plant-name" for="room-{{roomId}}-plantName">{{plantName}}</label>
-            <!-- <input id="room-{{roomId}}-plantName" type="text" name="plantName" value="" /> -->
+            <input id="room-{{roomId}}-plantName" class="rb plant-name hide" type="text" name="plantName" value="{{plantName}}" />
+            <div class="dividing-line"></div> 
           </div> 
           <div id="room-{{roomId}}-time" class="card datetime">
             {{datetime}}
@@ -303,7 +304,7 @@
         <h3>设置任务</h3>
         <!-- policy list展示区 -->
         <nav>
-          <h4>模式载入：</h4>
+          <h4>模式载入（会覆盖当前的设置，请小心）：</h4>
           <ul class="model-list">
           </ul> 
         </nav>
@@ -337,32 +338,32 @@
       {% verbatim %}
       <tr index="{{index}}">
         <td>
-          <input type="number" name="{{index}}-date" class placeholder="间隔天数" value={{date}}> 
+          <input type="number" name="date" class placeholder="间隔天数" value={{date}}> 
         </td>
         <td>
-          <input type="number" name="{{index}}-time" class placeholder="间隔小时" value={{hour}}> 
+          <input type="number" name="time" class placeholder="间隔小时" value={{hour}}> 
         </td>
         <td>
-          <input type="number" name="{{index}}-co2-0" class placeholder="下限" value={{c0}}> 
+          <input type="number" name="co2-0" class placeholder="下限" value={{c0}}> 
         </td>
         <td>
-          <input type="number" name="{{index}}-co2-1" class placeholder="上限" value={{c1}}> 
+          <input type="number" name="co2-1" class placeholder="上限" value={{c1}}> 
         </td>
         <td>
-          <input type="number" name="{{index}}-temperature-0" class placeholder="下限" value={{t0}}> 
+          <input type="number" name="temperature-0" class placeholder="下限" value={{t0}}> 
         </td>
         <td>
-          <input type="number" name="{{index}}-temperature-1" class placeholder="上限" value={{t1}}> 
+          <input type="number" name="temperature-1" class placeholder="上限" value={{t1}}> 
         </td>
         <td>
-          <input type="number" name="{{index}}-humidity-0" class placeholder="下限" value={{h0}}> 
+          <input type="number" name="humidity-0" class placeholder="下限" value={{h0}}> 
         </td>
         <td>
-          <input type="number" name="{{index}}-humidity-1" class placeholder="上限" value={{h1}}> 
+          <input type="number" name="humidity-1" class placeholder="上限" value={{h1}}> 
         </td>
         {{#with light}}
         <td>
-          <select class name="{{index}}-brightness">
+          <select name="brightness">
             <option value="blue" {{blue}}>蓝光</option>
             <option value="white" {{white}}>白光</option>
             <option value="yellow" {{yellow}}>黄光</option>
@@ -371,7 +372,7 @@
         {{/with}}
         <td>
           <!-- <div class="alert alert-dismissable"> -->
-            <button index="{{index}}" type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
           <!-- </div> -->
         </td>
       </tr>
@@ -397,6 +398,22 @@
           </div>
           <button name="freg-adjust" class="btn btn-success">设置</button>
         </form> 
+      </div>
+      {% endverbatim %} 
+    </script>
+
+    <script id="setting-log-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <div id="config" class="config">
+        <form>
+          <select id="config-type">
+            <option value="ERROR">错误</option>
+            <option value="COMMUNICATION">通信</option>
+            <option value="DEBUG">调试</option>
+            <option value="WORK">工作</option>
+          </select>
+          <button type="submit">提交</button>
+        </form>
       </div> 
       {% endverbatim %} 
     </script>
@@ -408,24 +425,16 @@
       <div id="sidebar" class="col-md-2" hide></div> 
 
       <div id="content" class="col-md-10">
+        <section>
+          <nav id="room-cards">
+            <ul id="room-list">
+            </ul>
+          </nav> 
+        </section>
 
-        <div id="config" class="config">
-          <form>
-            <select id="config-type">
-              <option value="ERROR">错误</option>
-              <option value="COMMUNICATION">通信</option>
-              <option value="DEBUG">调试</option>
-              <option value="WORK">工作</option>
-            </select>
-            <button type="submit">提交</button>
-          </form>
-        </div> 
-
-        <nav id="room-cards">
-          <ul id="room-list">
-          </ul>
-        </nav> 
-
+        <section>
+          <div id="setting-panel" class="setting"></div> 
+        </section>
       </div> 
 
     </div> 

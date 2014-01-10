@@ -219,6 +219,25 @@ test {
             margin: 2% 0;
             .room-thumbnail {
                 .up {
+                    label, input {
+                        z-index: 2;
+                    }
+                    input {
+                        width: 50%;
+                        /* z-index: 10; */
+                    }
+                    .dividing-line {
+                        width: inherit;
+                        height: 146%;
+                        border-left: 1px dashed black;
+                        position: absolute;
+                        left: 51px;
+                        top: 23px;
+                        transform:rotate(45deg);
+                        -ms-transform:rotate(45deg); /* IE 9 */
+                        -webkit-transform:rotate(45deg); /* Safari and Chrome */
+                    }
+
                     div[id*="temperature"] p {
                         &:before {
                             display: block;
