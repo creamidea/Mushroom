@@ -1,0 +1,53 @@
+<script id="realtime-chart-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <!-- 这里是实时更新趋势图显示区域 -->
+  {{#each datapkg}}
+  <div id="{{@key}}" class="chart">
+    <h1>{{cn-name}}传感器一小时趋势图</h1>
+    <svg></svg>
+  </div> 
+  {{/each}}
+  {% endverbatim %} 
+</script>
+<script id="search-chart-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <form class="form-inline" role="form">
+    <div class="form-group">
+      <label class="sr-only" for="startTime">起始时间</label>
+      <input type="datetime" class="form-control" name="startTime" placeholder="起始时间">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="endTime">终止时间</label>
+      <input type="datetime" class="form-control" name="endTime" placeholder="终止时间">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="endTime">传感器类型</label>
+      <select name="sensorType">
+        <option value="all">所有传感器</option>
+        <option value="temperature">温度传感器</option>
+        <option value="humidity">湿度传感器</option>
+        <option value="co2">二氧化碳传感器</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-default">搜索</button>
+  </form>
+  <!-- 这里是历史数据更新趋势图显示区域 -->
+  <!-- <div id="search-chart" class="chart"> -->
+  <!--   <svg></svg> -->
+  <!-- </div> -->
+  {% endverbatim %} 
+</script>
+
+<script id="chart-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {{#each charts}}
+  <div id="search-chart" class="chart">
+    <svg></svg>
+  </div>
+  {{/each}}
+  {% endverbatim %} 
+</script>
+<script id="" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {% endverbatim %} 
+</script>

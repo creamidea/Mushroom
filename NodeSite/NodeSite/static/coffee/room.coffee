@@ -571,7 +571,7 @@ class RoomPolicySetter extends Frame
     # context[pos] = []
     context[policyNum] = 
       # 仕方ない
-      data: ""
+      date: ""
       hour: ""
       temperature: []
       humidity: []
@@ -627,7 +627,7 @@ class RoomPolicySetter extends Frame
           $lastRow.attr("index", policyNum)
           context[policyNum] = 
             # 仕方ない
-            data: ""
+            date: ""
             hour: ""
             temperature: []
             humidity: []

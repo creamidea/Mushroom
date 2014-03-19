@@ -1,0 +1,19 @@
+<script id="controller-list-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <ul>
+    {{#each context}}
+    <li class="{{controllerType}}" c_id="{{controllerId}}" r_id="{{roomId}}">
+      <form>
+        <label for="controller-{{controllerId}}-switcher">{{controllerType}}</label>
+        <input type="checkbox" name="switcher" id="controller-{{controllerId}}-switcher" cid="{{controllerId}}" {{checked}}>
+        <label class="switcher" for="controller-{{controllerId}}-switcher"></label>
+      </form>
+    </li>
+    {{/each}}
+  </ul>
+  {% endverbatim %} 
+</script>
+<script id="room-template=1" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {% endverbatim %} 
+</script>

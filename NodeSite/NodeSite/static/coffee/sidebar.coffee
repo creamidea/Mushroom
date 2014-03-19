@@ -1,4 +1,5 @@
 # TODO: 激活状态
+'use strict'
 class Sidebar extends Frame
   constructor: (tplName) ->
     super(tplName)

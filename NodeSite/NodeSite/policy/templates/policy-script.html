@@ -1,0 +1,171 @@
+<!-- 策略外层框架模板 -->
+<script id="policy-out-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <!-- 策略视图结构 -->
+  <div id="room-{{roomId}}-policy-viewer" class="policy viewer">
+    <h3>{{title}}</h3>
+    <p name="meta"></p> <!-- 这里显示策略元信息 -->
+    <div class="timeline"></div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th colspan=2>间隔时间</th>
+          <th colspan=2>二氧化碳范围</th>
+          <th colspan=2>温度范围</th>
+          <th colspan=2>湿度范围</th>
+          <th>光色</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+    {{#if edit}}
+    <div name="policy-add"></div> 
+    <div class="form-group">
+      <label class="sr-only" for="start-date">运行起始日期</label>
+      <input type="date" class="form-control" id="start-date" placeholder="运行起始日期" style="display: block">
+      <label class="sr-only" for="start-date">运行起始时间</label>
+      <input type="time" class="form-control" id="start-time" placeholder="运行起始时间" style="display: block">
+    </div>
+    <button type="submit" name="post">提交</button>
+    {{/if}}
+  </div> 
+  {% endverbatim %} 
+</script>
+
+<!-- 策略meta信息 -->
+<script id="policy-meta-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <span room-id={{roomId}} name="roomId">
+    <label>房间号：</label>
+    <p style="display: inline">{{roomId}}</p>
+    {{#if isEdit}}
+    <input type="text" name="roomId"/>
+    <i class="glyphicon glyphicon-pencil"></i>
+    {{/if}}
+  </span>
+  <span {{#if policyId}}policy-id="{{policyId}}"{{/if}} name="description">
+    <label>描述：</label>
+    <p style="display: inline">{{description}}</p>
+    {{#if isEdit}}
+    <input type="text" {{#if policyId}}policy-id="{{policyId}}"{{/if}} name="description"/>
+    <i class="glyphicon glyphicon-pencil"></i>    
+    {{/if}}
+  </span>
+  {% endverbatim %} 
+</script>
+
+<!-- 策略每一天记录 -->
+<script id="policy-record-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+    {{#each policy}}
+    <tr>
+      <td>
+        <p>{{date}}</p>
+        <input type="text" name="date" value="" />
+      </td>
+      <td>
+        <p>{{hour}}</p>
+        <input type="text" name="hour" value="" />
+      </td>
+      {{#each co2}}
+      <td>
+        <p>{{this}}</p>
+        <input type="text" name="co2-{{@index}}" value="" />
+      </td>
+      {{/each}}
+      {{#each temperature}}
+      <td>
+        <p>{{this}}</p>
+        <input type="" name="temperature-{{@index}}" value="" />
+      </td>
+      {{/each}}
+      {{#each humidity}}
+      <td>
+        <p>{{this}}</p>
+        <input type="" name="humidity-{{@index}}" value="" />
+      </td>
+      {{/each}}
+      <td brightness="{{brightness}}">
+        <p>{{brightness}}</p>
+        <input type="text" name="brightness" value="" />
+      </td>
+      {{#if ../isEdit}}
+      <td>
+        <button type="button" class="close"><i class="glyphicon glyphicon-remove"></i></button>
+      </td>
+      {{/if}}
+    </tr>
+    {{/each}}
+  {% endverbatim %} 
+</script>
+
+<!-- 增加行 -->
+<script id="policy-add-record-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <form class="form-inline" role="form" name="add-record-form">
+    <div class="form-group">
+      <label class="sr-only" for="date">间隔天数</label>
+      <input type="number" class="form-control" id="date" placeholder="间隔天数">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="hour">间隔小时</label>
+      <input type="number" class="form-control" id="hour" placeholder="间隔小时">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="co2-0">二氧化碳下限</label>
+      <input type="number" class="form-control" id="co2-0" placeholder="二氧化碳下限">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="co2-1">二氧化碳上限</label>
+      <input type="number" class="form-control" id="co2-1" placeholder="二氧化碳上限">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="temperature-0">温度下限</label>
+      <input type="number" class="form-control" id="temperature-0" placeholder="温度下限">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="temperature-1">温度上限</label>
+      <input type="number" class="form-control" id="temperature-1" placeholder="温度上限">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="humidity-0">湿度下限</label>
+      <input type="number" class="form-control" id="humidity-0" placeholder="湿度下限">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="humidity-1">湿度上限</label>
+      <input type="number" class="form-control" id="humidity-1" placeholder="湿度上限">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="brightness">光带颜色</label>
+      <input type="text" class="form-control" id="brightness" placeholder="光带颜色">
+    </div>
+    <div class="form-group">
+      <label class="sr-only" for="insertPosition">插入位置</label>
+      <input type="number" class="form-control" id="insertPosition" placeholder="插入位置">
+    </div>
+    <button type="submit" class="btn btn-default" name="add-policy">增加</button>
+  </form>
+  {% endverbatim %} 
+</script>
+
+<!-- 策略列表 -->
+<script id="policy-list-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <ul>
+    {{#each policys}}
+    <li policy-id="{{policyId}}">{{description}}</li>
+    {{/each}}
+  </ul>
+  <div id="policy-show-area"></div> 
+  {% endverbatim %}
+</script>
+
+<script id="room-1-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {% endverbatim %}
+</script>
+<script id="room-1-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {% endverbatim %}
+</script>

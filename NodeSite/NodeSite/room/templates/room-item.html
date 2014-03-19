@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load compressed %}
+
+<!-- 绘制图表 -->
+{% block content %}
+<style>
+  .chart svg {
+  height: 400px;
+  }
+</style>
+
+<!-- <h1>房间{{room_id}}</h1> -->
+
+<!-- <p>这里包含房间的基本参数</p> -->
+<div id="room-{{room_id}}" class="room"></div> 
+
+<div id="charts-area" class="chart list">
+  <div id="realtime-chart" ></div> 
+</div> 
+
+<div id="search-chart-area" class="search"></div> 
+
+<!-- <\!-- 控制器列表 -\-> -->
+<!-- <div id="controller-list" class="controller list"></div>  -->
+
+<!-- 这里图表显示区域 -->
+<!-- <section> -->
+<!--   <div id="chart" class="chart"> -->
+<!--     <h1>图标测试1</h1> -->
+<!--     <svg></svg> -->
+<!--   </div>  -->
+  
+<!--   <div id="realtime-chart-1" class="chart"> -->
+<!--     <h1>实时更新图</h1> -->
+<!--     <svg></svg> -->
+<!--   </div>  -->
+
+<!--   <div id="line-with-focus-chart" class="chart"> -->
+<!--     <h1>双层图测试</h1> -->
+<!--     <svg></svg> -->
+<!--   </div>  -->
+<!-- </section> -->
+
+<!-- <div id="policy-list"></div> -->
+
+<!-- 这里是弹出层 modal -->
+<div class="modal fade" id="create-new-policy-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">创建新的养殖策略</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <!-- <button type="button" class="btn btn-primary">提交</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% compressed_js 'd3' %}
+{% compressed_css 'nv.d3' %}
+{% compressed_js 'nv.d3' %}
+
+<!-- 策略处理模块 -->
+{% include "policy-script.html" %}
+{% compressed_js 'policy' %}
+
+<!-- 控制器处理模块 -->
+{% include "controller-script.html" %}
+{% compressed_js 'controller' %}
+
+<!-- 房间处理模块 -->
+{% include "room-script.html" %}
+{% compressed_js 'room' %}
+
+<!--数据处理模块-->
+{% compressed_js 'data' %}
+<!-- 图表处理模块 -->
+{% include "chart-script.html" %}
+
+{% compressed_js 'room_item' %}
+
+{% endblock %}

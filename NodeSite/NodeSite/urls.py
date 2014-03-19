@@ -7,19 +7,31 @@ from NodeSite import settings
 from django.contrib import admin
 admin.autodiscover()
 
+from NodeSite.views import home
 urlpatterns = patterns('',
     # 账户设置，系统设置
-    url(r'^accounts/', include('NodeSite.accounts.urls')),
-    url(r'^mushroom/', include('NodeSite.mushroom.urls')),
+    url(r'^$', home, name="home"),
+    url(r'^account/', include('NodeSite.account.urls')),
+    url(r'^room/', include('NodeSite.room.urls')),
+    url(r'^plant/', include('NodeSite.plant.urls')),
+    url(r'^sensor/', include('NodeSite.sensor.urls')),
+    url(r'^controller/', include('NodeSite.controller.urls')),
+    url(r'^policy/', include('NodeSite.policy.urls')),
+    url(r'^search/', include('NodeSite.search.urls')),
+    url(r'^data/', include('NodeSite.data.urls')),
+    url(r'^system/', include('NodeSite.system.urls')),
 )
 
 urlpatterns += patterns('NodeSite.views',
     # 首页
-    url(r'^$', 'home', name='home'),
+    url(r'^signal-page/$', 'signal_page'),
     # 用户登录/登出  
     url(r'^login/$', 'login', name='login'),
     url(r'^login-test/$', 'login_test', name="login_test"),
     url(r'^logout/$', 'logout', name='logout'),
+
+    # 用户注册
+    url(r'^register/$', 'register', name='register'),
 
     # 修改名称
     url(r'^([\w]+)/(\d+)/name/$', 'update_name',),
@@ -51,7 +63,10 @@ urlpatterns += patterns('NodeSite.views',
     
 )
 
+# from article.views import ArticleDetailView
+
 if settings.DEBUG:
+    urlpatterns += patterns('',
     # Test
     # url(r'^NodeSite/', include('NodeSite.foo.urls')),
 
@@ -59,8 +74,16 @@ if settings.DEBUG:
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    
+
+    url(r'^mushroom/', include('NodeSite.mushroom.urls')),
+    url(r'^webchat/', include('NodeSite.webchat.urls')),
+    )
     # test message
     urlpatterns += patterns('NodeSite.views',
                             (r'^playlist/create/$', 'create_playlist'),
     )
+
+    # urlpatterns += patterns('',
+    #     url(r'^(?P<slug>[-_\w]+)/$', ArticleDetailView.as_view(), name='article-detail'),
+    # )
+

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load compressed %}
+{% block content %}
+
+<div id="room-list"></div>
+<!-- 这里是弹出层 modal -->
+<div class="modal fade" id="create-new-policy-model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">创建新的养殖策略</h4>
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <!-- <button type="button" class="btn btn-primary">提交</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+
+<!-- 策略处理模块 -->
+{% include "policy-script.html" %}
+{% compressed_js 'policy' %}
+
+<!-- 控制器处理模块 -->
+{% include "controller-script.html" %}
+{% compressed_js 'controller' %}
+
+<!-- 房间处理模块 -->
+{% include "room-script.html" %}
+{% compressed_js 'room' %}
+
+{% compressed_js 'room_list' %}
+
+{% endblock %}

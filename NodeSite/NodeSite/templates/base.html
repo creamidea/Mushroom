@@ -8,7 +8,11 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        {% if title %}
+        <title>{{title}}</title>
+        {% else %}
+        <title>"蘑菇房监控系统"</title>
+        {% endif %}
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -17,12 +21,11 @@
         {% compressed_css 'normalize' %}
         {% compressed_css 'main' %}
         {% compressed_css 'bootstrap' %}
-        {% compressed_css 'le' %}
         <!-- <link rel="stylesheet" href="{% static 'vendor/css/normalize.css' %}"> -->
         <!-- <link rel="stylesheet" href="{% static 'vendor/css/main.css' %}"> -->
         <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css'%}"> -->
         <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-theme.min.css'%}"> -->
-        
+
         {% compressed_js 'modernizr' %}
         <!-- <script src="{% static 'vendor/js/modernizr-2.6.2.min.js' %}"></script> -->
 
@@ -33,33 +36,43 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        {% if user.is_authenticated %}
-        {{ user.username }}
-        <a href="{% url 'm_settings' %}">蘑菇房系统设置</a>
-        <a href="{% url 'manage' %}">用户管理</a>
-        <a href="{% url 'profile' %}">账户设置</a>
-        <a href="{% url 'signout' %}">退出</a>
-        {% else %}
-        <div id="login" class="login">
-          <label>用户名</label>
-          <input class="form-control" type="text" name="username" value="" />
-          <label>密码</label>
-          <input class="form-control" type="password" name="password" value="" />
-          <button class="btn btn-success">登录</button>
+        <!--{% if user.is_authenticated %}-->
+        <!--{{ user.username }}-->
+        <!--<a href="{% url 'm_settings' %}">蘑菇房系统设置</a>-->
+        <!--<a href="{% url 'manage' %}">用户管理</a>-->
+        <!--<a href="{% url 'profile' %}">账户设置</a>-->
+        <!--<a href="{% url 'signout' %}">退出</a>-->
+        <!--{% else %}-->
+        <!--<form id="login" class="login" action="/account/login/" method="post">-->
+          <!--<label>用户名</label>-->
+          <!--<input class="form-control" type="text" name="username" value="" />-->
+          <!--<label>密码</label>-->
+          <!--<input class="form-control" type="password" name="password" value="" />-->
+          <!--<button class="btn btn-success" type="submit">登录</button>-->
+        <!--</form>-->
+        <!--{% endif %}-->
+        {% include "nav.html" %}
+        <div class="container">
+          {% block content %}{% endblock %}
         </div> 
-        {% endif %}
 
-        {% block content %}
-        {% endblock %}
+        <!-- 公共部件 -->
+        {% compressed_js 'jquery' %}
+        <!--{% compressed_js 'plugins' %}-->
+        {% compressed_js 'riot' %}
+        {% compressed_js 'handlebars' %}
+        {% compressed_js 'underscore' %}
+        {% compressed_js 'bootstrap' %}
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{% static 'vendor/js/jquery-1.10.2.min.js' %}"><\/script>')</script>
-          {% compressed_js 'underscore' %}
-          {% compressed_js 'bootstrap' %}
+        <!-- 加载各自页面自己的js模块 -->
+        {% block extra_js %}{% endblock %}
+
         <!-- <script src="{% static 'vendor/js/bootstrap.min.js' %}"></script> -->
         <!-- <script src="{% static 'js/plugins.js' %}"></script> -->
         <!-- <script src="{% static 'js/main.js' %}"></script> -->
-        {% compressed_js 'plugins' %}
+
+        <!--{% compressed_js 'plugins' %}-->
+
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <!-- 暂时不需要 -->
         <!-- <script> -->

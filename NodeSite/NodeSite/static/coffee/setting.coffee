@@ -1,13 +1,24 @@
-class SettingPanel extends Frame
-  constructor: () ->
-    @$el = $("#setting-panel")
+class SettingPanel extends View
+  # constructor: () ->
+    # @$el = $("#setting-panel")
     # @render()
+    # super()
   render: () ->
-    log = new LogSetting "#setting-log-template"
-    log.renderTo @$el
+    super()
+    $el = @$el
+    logSetting = new LogSetting
+      el: "#config"
+      templateName: "#setting-log-template"
+    logSetting.render()
+    $tab = $el.find('>ul a').click (e)->
+      e.preventDefault()
+      console.log e.target
+      $(this).tab('show')
+    # log = new LogSetting "#setting-log-template"
+    # log.renderTo @$el
 
-class LogSetting extends Frame
-  constructor: (@templateName) ->
+class LogSetting extends View
+  # constructor: (@templateName) ->
 
   renderTo: (target) ->
     console.log @templateName
@@ -20,6 +31,3 @@ class LogSetting extends Frame
       put = new Put "/config/log/#{type}", (data) ->
         window.hint data
       put.send()
-
-
-        

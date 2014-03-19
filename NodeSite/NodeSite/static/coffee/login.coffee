@@ -2,6 +2,7 @@ class Login
   # alert 'ice'
   constructor: (uri) ->
     @$login = $login = $('#login')
+    @$img = $("img")
     @$username = $login.find('input[name=username]')
     @$password = $login.find('input[name=password]')
     @$remember = $login.find('input[name=remember]')
@@ -14,6 +15,7 @@ class Login
     $login.show()
   hide: ->
     $login = @$login
+    @$img.hide()
     $login.hide()
   btnDisable: ->
     @$btnLogin.html('登录中...').attr('disabled','disabled')

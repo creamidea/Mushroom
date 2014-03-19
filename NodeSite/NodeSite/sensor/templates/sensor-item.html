@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load compressed %}
+{% block content %}
+
+<style>
+#chart svg,
+#realtime-chart svg {
+  height: 400px;
+}
+</style>
+
+<h1>传感器：{{sensor_id}}</h1>
+
+<p>这里包含传感器的基本参数</p>
+<section>
+<!--<div id="room-{{room_id}}"></div>-->
+</section>
+<!-- 这里图表显示区域 -->
+<section>
+<div id="chart">
+  <h1>图标测试1</h1>
+  <svg></svg>
+</div>
+
+<!-- 这里是一小时趋势图显示区域 -->
+<div id="realtime-chart">
+  <h1>一小时趋势图</h1>
+  <svg></svg>
+</div>
+</section>
+
+<div id="policy-list"></div>
+{% endblock %}
+
+{% block extra_js %}
+{% compressed_js 'd3' %}
+{% compressed_css 'nv.d3' %}
+{% compressed_js 'nv.d3' %}
+{% endblock %}

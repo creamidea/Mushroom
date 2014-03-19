@@ -8,8 +8,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 PROJECT_NAME = 'NodeSite'
 
-MIDDLEWARE_PORT = 10002
-MIDDLEWARE_ADDRESS = "192.168.1.250"
+MIDDLEWARE_ADDRESS = ("127.0.0.1", "9001")
+# MIDDLEWARE_ADDRESS = ("10.18.50.66", "9001")
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -150,22 +150,44 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     
-    # 账户管理 
-    '%s.accounts' % PROJECT_NAME,
-    # 系统设置
+    # 系统设置(discard)
     '%s.mushroom' % PROJECT_NAME,
+
+    # 账户管理 
+    '%s.account' % PROJECT_NAME,
+    # 房间
+    '%s.room' % PROJECT_NAME,
+    # 植物
+    '%s.plant' % PROJECT_NAME,
+    # 传感器
+    '%s.sensor' % PROJECT_NAME,
+    # 控制器
+    '%s.controller' % PROJECT_NAME,
+    # 养殖策略
+    '%s.policy' % PROJECT_NAME,
+    # 搜索系统
+    '%s.search' % PROJECT_NAME,
+    # 数据系统
+    '%s.data' % PROJECT_NAME,
+
+    # 系统设置和控制
+    '%s.system' % PROJECT_NAME,
+
+    # 测试聊天系统
+    '%s.webchat' % PROJECT_NAME,
     
 )
     
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
-# TEMPLATE_CONTEXT_PROCESSORS = (
-#     # 'django.core.context_processors.request',
-#     # 'django.core.context_processors.auth',
-#     # 'django.core.context_processors.debug',
-#     # 'django.core.context_processors.i18n',
-#     # 'django.core.context_processors.media',
-# )
+TEMPLATE_CONTEXT_PROCESSORS = (
+    # 'django.core.context_processors.auth',
+    # 'django.core.context_processors.debug',
+    # 'django.core.context_processors.i18n',
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    # 'django.core.context_processors.media',
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -244,7 +266,7 @@ PIPELINE_COMPILERS = (
     'pipeline.compilers.coffee.CoffeeScriptCompiler',
 )
 
-# 这里是写css文件，less文件会被自动编译
+# 这里是写css文件，会被自动编译less文件
 PIPELINE_CSS = {
     'bootstrap': {
         'source_filenames': (
@@ -258,6 +280,12 @@ PIPELINE_CSS = {
             'vendor/css/normalize.css',
         ),
         'output_filename': 'css/normalize.css',
+    },
+    'nv.d3': {
+        'source_filenames': (
+            'vendor/css/nv.d3.min.css',
+        ),
+        'output_filename': 'css/nv.d3.css',
     },
     'main': {
         'source_filenames': (
@@ -276,17 +304,18 @@ PIPELINE_CSS = {
     },
 }
 
-# 这里就是写js文件，coffee文件会被自动编译
+# 这里就是写js文件，会被自动编译coffee文件
 PIPELINE_JS = {
     'jquery': {
         'source_filenames': (
-            'vendor/js/jquery-1.10.2.min.js',
+            'vendor/js/jquery-1.11.0.min.js',
+            'vendor/js/jquery_csrf_ajax.js',
         ),
         'output_filename': 'js/jquery.min.js',
     },
     'handlebars': {
         'source_filenames': (
-            'vendor/js/handlebars-v1.1.2.js',
+            'vendor/js/handlebars-v1.3.0.js',
         ),
         'output_filename': 'js/handlebars.min.js',
     },
@@ -308,6 +337,24 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/modernizr.min.js',
     },
+    'riot': {
+        'source_filenames': (
+            'vendor/js/riot.min.js',
+        ),
+        'output_filename': 'js/riot.js',
+    },
+    'd3': {
+        'source_filenames': (
+            'vendor/js/d3.min.js',
+        ),
+        'output_filename': 'js/d3.js',
+    },
+    'nv.d3': {
+        'source_filenames': (
+            'vendor/js/nv.d3.min.js',
+        ),
+        'output_filename': 'js/nv.d3.js',
+    },
     # -----------------------------------------
     'plugins': {
         'source_filenames': (
@@ -326,9 +373,46 @@ PIPELINE_JS = {
             'coffee/login.coffee',
             'coffee/room.coffee',
             'coffee/sidebar.coffee',
+            'coffee/register.coffee',
             'coffee/setting.coffee',
         ),
         'output_filename': 'js/components.js',
+    },
+    'room': {
+        'source_filenames': (
+            'room.coffee',
+        ),
+        'output_filename': 'room.js',
+    },
+    'room_list': {
+        'source_filenames': (
+            'room_list.coffee',
+        ),
+        'output_filename': 'room_list.js',
+    },
+    'room_item': {
+        'source_filenames': (
+            'room_item.coffee',
+        ),
+        'output_filename': 'room_item.js',
+    },
+    'policy': {
+        'source_filenames': (
+            'policy.coffee',
+        ),
+        'output_filename': 'policy.js',
+    },
+    'data': {
+        'source_filenames': (
+            'data.coffee',
+        ),
+        'output_filename': 'data.js',
+    },
+    'controller': {
+        'source_filenames': (
+            'controller.coffee',
+        ),
+        'output_filename': 'controller.js',
     },
 }
 # =============================================================

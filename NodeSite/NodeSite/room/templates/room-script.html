@@ -1,0 +1,138 @@
+<!-- 房间meta元素模板 -->
+<script id="room-meta-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <!-- <h3>房间{{roomId}}基本信息</h3> -->
+  <p id="room-id-{{roomId}}">
+    <span>房间名称</span>
+    <a href="/room/{{roomId}}"><strong>{{roomName}}</strong></a>
+  </p>
+  <p id="plant-id-{{plantId}}">
+    <span>植物名称</span>
+    <a href="/plant/{{plantId}}"><strong>{{plantName}}</strong></a>
+  </p>
+  {% endverbatim %} 
+</script>
+
+<!-- 房间传感器列表模板 -->
+<script id="room-sensors-list-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {{#each sensors}}
+  <div class="{{@key}}">
+    <p>{{cn-name}}</p>
+    {{#each this}}
+    <ul class="pagination">
+      <li><a href="/sensor/{{this}}">{{this}}</a></li>
+    </ul>
+    {{/each}}
+  </div> 
+  {{/each}}
+  {% endverbatim %} 
+</script>
+
+<!-- 房间整体情况（暂时是平均值） -->
+<script id="room-env-average-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <div class="brightness lamp {{brightness}}">
+    <strong  brightness="{{brightness}}">灯管颜色:{{brightness}}</strong>
+  </div> 
+  <div class="average">
+    <div class="lastest-time">{{time}}</div> 
+    {{#each average}}
+    <p type="{{@key}}">
+      <!-- <span>平均温度</span> -->
+      <strong>{{this}}</strong>
+    </p>
+    {{/each}}
+  </div> 
+  {% endverbatim %} 
+</script>
+
+<!-- 展示正在执行的策略的模板 -->
+<script id="room-policy-now-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <div class="policy">
+    <h3>养殖策略</h3>
+    <div id="create-room-{{roomId}}-policy">
+      <button class="btn btn-success" name="create-new-policy" data-toggle="modal" data-target="#create-new-policy-model">
+        创建新的养殖策略
+      </button>
+    </div>
+    <!--<p><a href="/policy/now/{{nowPolicy}}/">正在执行的策略</a></p>-->
+    <div id="show-room-{{roomId}}-now-policy"></div> 
+  </div> 
+  {% endverbatim %} 
+</script>
+
+<script id="room-controller-list-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <div class="controller list">
+    <div id="room-{{roomId}}-controller-list" class="some_class"></div> 
+  </div> 
+  {% endverbatim %} 
+</script>
+
+<script id="room-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <li id="room-{{roomId}}" class="room" rid="{{roomId}}">
+    <div class="widget">
+      <a href="#/1/policy/add">
+        <i class="glyphicon glyphicon-th-list">增加养殖策略</i>
+      </a>
+      <a href="#/1/policy/now">
+        <i class="glyphicon glyphicon-tasks">正在执行任务</i>
+      </a>
+      <a href="#/1/controller/list">
+        <i class="glyphicon glyphicon-cog">设备控制面板</i>
+      </a>
+    </div> 
+    <div class="meta-info">
+      <p id="room-id-{{roomId}}">
+        <span>房间名称</span>
+        <a href="/room/{{roomId}}"><strong>{{roomName}}</strong></a>
+      </p>
+      <p id="plant-id-{{plantId}}">
+        <span>植物名称</span>
+        <a href="/plant/{{plantId}}"><strong>{{plantName}}</strong></a>
+      </p>
+    </div> 
+    <div class="env">
+      <div class="brightness">
+        <p class="{{brightness}}">{{brightness}}</p>
+      </div> 
+      <div class="average">
+        {{#each average}}
+        <p type="{{@key}}">
+          <!-- <span>平均温度</span> -->
+          <strong>{{this}}</strong>
+        </p>
+        {{/each}}
+      </div> 
+      <div class="timeline">
+        <p>{{time}}</p>
+      </div>   
+    </div> 
+  </li> 
+  {% endverbatim %} 
+</script>
+<!-- 房间外层模板 -->
+<script id="room-list-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <ul class="room list">
+  {{! 房间的模板，用于放各个房间的部件}}
+  {{#each context}}
+  {{room-list}}  {{! 这里加载各个部件 }}
+  {{/each}}
+  </ul>
+  {% endverbatim %} 
+</script>
+<!-- 这里是房间的导航 -->
+<script id="room-nav-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <ul class="room-nav">
+    {{#each rooms}}
+    <li class="list-group-item"><a href="room-{{roomId}}">房间{{roomName}}</a></li>
+    {{/each}}
+  </ul>
+  {% endverbatim %} 
+</script>
+

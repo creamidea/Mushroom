@@ -16,6 +16,7 @@ $ ->
   echo.start()
   window.hint = echo.hint
   login = new Login
+  $stage = $("#content")
 
   username = ""
   # 自动尝试性登录
@@ -43,11 +44,14 @@ $ ->
     # console.log context
     sidebar.renderTo "#sidebar", context
 
+    # register = new Register "#register-template"
+    # register.renderTo "#register"
+    
     # 房间信息
     # roomList.fetch()
     roomList.fetch()            #初始界面就显示房间列表
     nowShowElt = roomList
-    # roomList.hide()
+    roomList.hide()
 
     $.subscribe "#mushroom", (e) ->
       if nowShowElt
@@ -73,6 +77,8 @@ $ ->
         settingPanel.show()
       else
         settingPanel = new SettingPanel
+          el: "#setting-panel"
+          templateName: "#setting-panel-template"
         settingPanel.render()
       nowShowElt = settingPanel
       
@@ -81,7 +87,8 @@ $ ->
     # alert "logout"
     logout = new Post "/logout/", (data) ->
       console.log "sidebar", sidebar
-      sidebar.hide()
+      $stage.hide()
+      # sidebar.hide()
       # roomList.hide()
       $.publish "#echo/", [{definition: data.definition}]
       window.location.reload()

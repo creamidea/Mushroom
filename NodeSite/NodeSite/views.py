@@ -16,6 +16,7 @@ from django.contrib.contenttypes.models import ContentType
 from functools import wraps
 # from decorator import decorator
 import json
+
 def serialize(target="json"):
     """使用装饰器序列化参数"""
     _serialize = {
@@ -33,9 +34,18 @@ def serialize(target="json"):
             return response
         return wrapper2
     return wrapper1
-    
-# @login_required
+
+
 def home(request):
+    if not request.user.is_authenticated():
+        return render(request,"login-1.html", dict(title="蘑菇房监控平台"))
+    else:
+        print ">>>>", request.path
+        # return HttpResponseRedirect(redirect_to="/")
+        return render(request,"index.html", dict(title="蘑菇房监控平台"))
+
+# @login_required
+def signal_page(request):
     """
     主页视图处理函数
     
@@ -57,7 +67,7 @@ def userpackage(user):
             {"url": "#mushroom", "name": u"蘑菇房"},
             {"url": "#profile", "name": u"个人信息"},
             {"url": "#log", "name": u"日志"},
-            {"url": "#setting", "name": u"设置"},
+            {"url": "#setting", "name": u"系统设置"},
             {"url": "#logout", "name": u"退出"},
         ],
         "copyright": "CSLG",
@@ -128,10 +138,25 @@ def login(request):
     finally:
         return {"code": code, "definition": mesg}
 
+@serialize("json")
+@require_POST
+def register(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        new_user = form.save()
+        result = {
+            "code": 0,
+            "definition": "success",
+        }
+    else:
+        result = {
+            "code": -1,
+            "definition": str(form.errors)
+        }
+    return result
 
 @serialize("json")
 @require_POST
-# @login_required
 def logout(request):
     code, mesg = ("", "")
     # username = request.user.username
@@ -505,7 +530,6 @@ def controller_list_view(request, room_id):
     return {"code": code, "definition": definition, "context": data}
 
 from django.http import QueryDict
-
 @serialize("json")
 def controller_view(request, controller_id):
     controller_id = int(controller_id)

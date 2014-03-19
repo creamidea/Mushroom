@@ -28,6 +28,98 @@
 
     <!-- Add your site or application content here -->
     <!-- <div id="smart-table" class="table"></div>  -->
+    <!-- 提示层 Echo Layer -->
+    <ul id="echo-list"></ul>
+
+    <!-- 登录界面 Login -->
+    <div class="login-wrapper">
+      <img src="static/img/photo.png" class="" alt="gavatar">
+      <form id="login" class="form-horizontal" hide>
+        {% csrf_token %}
+        <div class="form-group">
+          <!-- <label for="inputEmail3" class="col-sm-2 control-label">Email</label> -->
+          <div class="col-sm-10">
+            <!-- <input type="email" class="form-control" id="inputEmail3" placeholder="电子邮件"> -->
+            <input type="text" class="form-control" id="inputText3" placeholder="用户名" name="username">
+          </div>
+        </div>
+        <div class="form-group">
+          <!-- <label for="inputPassword3" class="col-sm-2 control-label">密码</label> -->
+          <div class="col-sm-10">
+            <input type="password" class="form-control" id="inputPassword3" placeholder="密码" name="password">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="remember"> 记住我两周
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">登录</button>
+          </div>
+        </div>
+      </form> 
+    </div> 
+
+    <!-- 网页主体部分 -->
+    <div class="wrapper row">
+
+      <div id="sidebar" class="col-md-2"></div> 
+
+      <div id="content" class="col-md-10">
+        <!-- 展示蘑菇房温控信息 -->
+        <section>
+          <nav id="room-cards">
+            <ul id="room-list"> </ul>
+          </nav> 
+        </section>
+
+        <!-- user profile -->
+        <section>
+          <div id="user-profile" class="profile"></div> 
+        </section>
+
+        <!-- 控制面板 -->
+        <section id="setting-panel" class="tab-pane">
+        </section>
+
+      </div> 
+
+    </div> 
+    <!-- 网页主体结束部分 -->
+
+    <!-- 加载JavaScript -->
+    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+    <!-- <script>window.jQuery || document.write('<script src="{% static 'vendor/js/jquery-1.10.2.min.js' %}"><\/script>')</script> -->
+    <!-- 基础库 -->
+    {% compressed_js 'jquery' %}
+    {% compressed_js 'handlebars' %}
+    {% compressed_js 'underscore' %}
+    {% compressed_js 'bootstrap' %}
+    <!-- 核心 -->
+    {% compressed_js 'plugins' %}
+    {% compressed_js 'components' %}
+    {% compressed_js 'main' %}
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <!-- 暂时不需要 -->
+    <!-- <script> -->
+    <!--     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]= -->
+    <!--     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date; -->
+    <!--     e=o.createElement(i);r=o.getElementsByTagName(i)[0]; -->
+    <!--     e.src='//www.google-analytics.com/analytics.js'; -->
+    <!--     r.parentNode.insertBefore(e,r)}(window,document,'script','ga')); -->
+    <!--     ga('create','UA-XXXXX-X');ga('send','pageview'); -->
+    <!-- </script> -->
+
+    <!-- HTML Template -->
+    <!-- -------------------------
+         Test
+      ---------------------------- -->
     <script id="table-template" type="text/x-handlebars-template">
       {% verbatim %} 
       <nav for="table1" class="table menu">
@@ -62,45 +154,6 @@
       {% endverbatim %} 
     </script>
 
-    <!-- 提示层 Echo Layer -->
-    <ul id="echo-list"></ul>
-
-    <!-- 登录界面 Login -->
-    <form id="login" class="form-horizontal" hide>
-      {% csrf_token %}
-      <div class="form-group">
-        <!-- <label for="inputEmail3" class="col-sm-2 control-label">Email</label> -->
-        <div class="col-sm-10">
-          <!-- <input type="email" class="form-control" id="inputEmail3" placeholder="电子邮件"> -->
-          <input type="text" class="form-control" id="inputText3" placeholder="用户名" name="username">
-        </div>
-      </div>
-      <div class="form-group">
-        <!-- <label for="inputPassword3" class="col-sm-2 control-label">密码</label> -->
-        <div class="col-sm-10">
-          <input type="password" class="form-control" id="inputPassword3" placeholder="密码" name="password">
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" name="remember"> 记住我两周
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default">登录</button>
-        </div>
-      </div>
-    </form> 
-
-    <!-- HTML Template -->
-    <!-- -------------------------
-         Test
-      ---------------------------- -->
     <script id="entry-template" type="text/x-handlebars-template">
       {% verbatim %} 
       <div class="entry">
@@ -215,7 +268,7 @@
             {{/each}}
             </div>
 
-            <!-- 一下为表格显示数据 -->
+            <!-- 以下为表格显示数据 -->
             <div class="tab-pane fade" id="room-{{roomId}}-table">
             {{#each sensors}}
             <table id="room-{{roomId}}-{{sensorType}}-table" class="table table-striped">
@@ -341,7 +394,7 @@
           <input type="number" name="date" class placeholder="间隔天数" value={{date}}> 
         </td>
         <td>
-          <input type="number" name="time" class placeholder="间隔小时" value={{hour}}> 
+          <input type="number" name="hour" class placeholder="间隔小时" value={{hour}}> 
         </td>
         <td>
           <input type="number" name="co2-0" class placeholder="下限" value={{c0}}> 
@@ -402,65 +455,81 @@
       {% endverbatim %} 
     </script>
 
+    <script id="setting-panel-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <h3>设置面板</h3>
+      <ul class="nav nav-tabs">
+        <li class="active">
+          <a href="#config" data-toggle="tab">系统设置</a>
+        </li>
+        <li>
+          <a href="#register" data-toggle="tab">增加用户</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div id="config" class="config">
+          {{> setting-log-template}}
+        </div> 
+        <div id="register" class="tab-pane">
+          {{> register-template}}
+        </div>
+      </div> 
+      {% endverbatim %} 
+    </script>
+
     <script id="setting-log-template" type="text/x-handlebars-template">
       {% verbatim %} 
-      <div id="config" class="config">
-        <form>
-          <select id="config-type">
-            <option value="ERROR">错误</option>
-            <option value="COMMUNICATION">通信</option>
-            <option value="DEBUG">调试</option>
-            <option value="WORK">工作</option>
+      <div class="panel panel-default"></div> 
+      <form>
+        <select id="config-type">
+          <option value="ERROR">错误</option>
+          <option value="COMMUNICATION">通信</option>
+          <option value="DEBUG">调试</option>
+          <option value="WORK">工作</option>
+        </select>
+        <button type="submit">提交</button>
+      </form>
+      {% endverbatim %} 
+    </script>
+
+
+    <script id="register-template" type="text/x-handlebars-template">
+      {% verbatim %} 
+      <h3>增加用户</h3>
+      <form id="register-form" class="form-horizontal" role="form">
+        <div class="form-group">
+          <label for="username-input">用户名</label>
+          <input type="username" class="form-control" name="username" id="username-input" placeholder="用户名">
+        </div>
+        <div class="form-group">
+          <label for="gravatar-input">头像</label>
+          <input type="file" name="gravatar" id="gravatar-input">
+        </div> 
+        <div class="form-group">
+          <label for="password1-input">密码</label>
+          <input type="password" class="form-control" name="password1" id="password1-input" placeholder="输入密码">
+        </div> 
+        <div class="form-group">
+          <label for="password2-input">确认密码</label>
+          <input type="password" class="form-control" name="password2" id="email-input" placeholder="确认密码">
+        </div> 
+        <div class="form-group">
+          <label for="email-input">电子邮件</label>
+          <input type="email" class="form-control" name="email" id="email-input" placeholder="电子邮件">
+        </div> 
+        <div class="form-group">
+          <select class="form-control" name="group">
+            <option value="user">普通用户</option>
+            <option value="AE">农业专家</option>
+            <option value="admin1">系统管理人员</option>
+            <option value="admin2">开发维护人员</option>
           </select>
-          <button type="submit">提交</button>
-        </form>
-      </div> 
+        </div> 
+        <button type="submit" class="btn btn-default">注册</button>
+      </form>
       {% endverbatim %} 
     </script>
     <!-- 模板结束部分 -->
 
-    <!-- 网页主体部分 -->
-    <div class="wrapper row">
-
-      <div id="sidebar" class="col-md-2" hide></div> 
-
-      <div id="content" class="col-md-10">
-        <section>
-          <nav id="room-cards">
-            <ul id="room-list">
-            </ul>
-          </nav> 
-        </section>
-
-        <section>
-          <div id="setting-panel" class="setting"></div> 
-        </section>
-      </div> 
-
-    </div> 
-    <!-- 网页主体结束部分 -->
-
-    <!-- 加载JavaScript -->
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
-    <!-- <script>window.jQuery || document.write('<script src="{% static 'vendor/js/jquery-1.10.2.min.js' %}"><\/script>')</script> -->
-    <!-- 基础库 -->
-    {% compressed_js 'jquery' %}
-    {% compressed_js 'handlebars' %}
-    {% compressed_js 'underscore' %}
-    {% compressed_js 'bootstrap' %}
-    <!-- 核心 -->
-    {% compressed_js 'plugins' %}
-    {% compressed_js 'components' %}
-    {% compressed_js 'main' %}
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-    <!-- 暂时不需要 -->
-    <!-- <script> -->
-    <!--     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]= -->
-    <!--     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date; -->
-    <!--     e=o.createElement(i);r=o.getElementsByTagName(i)[0]; -->
-    <!--     e.src='//www.google-analytics.com/analytics.js'; -->
-    <!--     r.parentNode.insertBefore(e,r)}(window,document,'script','ga')); -->
-    <!--     ga('create','UA-XXXXX-X');ga('send','pageview'); -->
-    <!-- </script> -->
   </body>
 </html>

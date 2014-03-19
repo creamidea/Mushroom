@@ -1,10 +1,12 @@
 # Echo server program
 import socket
 import sys
+import signal
 
 HOST = None               # Symbolic name meaning all available interfaces
-PORT = 50007              # Arbitrary non-privileged port
+PORT = 9001              # Arbitrary non-privileged port
 s = None
+
 for res in socket.getaddrinfo(HOST, PORT, socket.AF_UNSPEC,
                               socket.SOCK_STREAM, 0, socket.AI_PASSIVE):
     af, socktype, proto, canonname, sa = res
@@ -26,8 +28,18 @@ if s is None:
     sys.exit(1)
 conn, addr = s.accept()
 print 'Connected by', addr
-while 1:
+
+running = True
+def signal_handler(signal, frame):
+    print 'Your press Ctrl+C!'
+    running = False
+    sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
+
+while True:
     data = conn.recv(1024)
     if not data: break
     conn.send(data)
-conn.close()
+    if not running:
+        conn.close()
+        break
