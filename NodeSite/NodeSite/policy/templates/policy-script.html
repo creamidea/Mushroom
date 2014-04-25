@@ -2,33 +2,29 @@
 <script id="policy-out-template" type="text/x-handlebars-template">
   {% verbatim %} 
   <!-- 策略视图结构 -->
-  <div id="room-{{roomId}}-policy-viewer" class="policy viewer">
+  <div id="room-{{roomId}}-policy" class="policy">
     <h3>{{title}}</h3>
     <p name="meta"></p> <!-- 这里显示策略元信息 -->
     <div class="timeline"></div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th colspan=2>间隔时间</th>
-          <th colspan=2>二氧化碳范围</th>
-          <th colspan=2>温度范围</th>
-          <th colspan=2>湿度范围</th>
-          <th>光色</th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-    {{#if edit}}
-    <div name="policy-add"></div> 
-    <div class="form-group">
-      <label class="sr-only" for="start-date">运行起始日期</label>
-      <input type="date" class="form-control" id="start-date" placeholder="运行起始日期" style="display: block">
-      <label class="sr-only" for="start-date">运行起始时间</label>
-      <input type="time" class="form-control" id="start-time" placeholder="运行起始时间" style="display: block">
-    </div>
-    <button type="submit" name="post">提交</button>
-    {{/if}}
+    <div class="container moveright16px">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th colspan=2>间隔时间</th>
+            <th colspan=2>二氧化碳范围</th>
+            <th colspan=2>温度范围</th>
+            <th colspan=2>湿度范围</th>
+            <th colspan=2>光照范围</th>
+            <th>光色</th>
+          </tr>
+        </thead>
+        <tbody> </tbody>
+      </table>
+    </div> 
+
+    <div class="policy-add"></div> 
+
   </div> 
   {% endverbatim %} 
 </script>
@@ -55,10 +51,9 @@
   {% endverbatim %} 
 </script>
 
-<!-- 策略每一天记录 -->
+<!-- 策略每一条记录 -->
 <script id="policy-record-template" type="text/x-handlebars-template">
   {% verbatim %} 
-    {{#each policy}}
     <tr>
       <td>
         <p>{{date}}</p>
@@ -85,18 +80,23 @@
         <p>{{this}}</p>
         <input type="" name="humidity-{{@index}}" value="" />
       </td>
+      {{#each brightness}}
+      <td>
+        <p>{{this}}</p>
+        <input type="" name="brightness-{{@index}}" value="" />
+      </td>
       {{/each}}
-      <td brightness="{{brightness}}">
+      <td brightness="{{light}}">
         <p>{{brightness}}</p>
         <input type="text" name="brightness" value="" />
       </td>
-      {{#if ../isEdit}}
+
       <td>
+        <button type="button" class="delete"><i class="glyphicon glyphicon-pencil"></i></button>
         <button type="button" class="close"><i class="glyphicon glyphicon-remove"></i></button>
       </td>
-      {{/if}}
+
     </tr>
-    {{/each}}
   {% endverbatim %} 
 </script>
 
@@ -106,7 +106,7 @@
   <form class="form-inline" role="form" name="add-record-form">
     <div class="form-group">
       <label class="sr-only" for="date">间隔天数</label>
-      <input type="number" class="form-control" id="date" placeholder="间隔天数">
+      <input type="number" class="form-control" id="date" name="date" placeholder="间隔天数">
     </div>
     <div class="form-group">
       <label class="sr-only" for="hour">间隔小时</label>
@@ -154,7 +154,12 @@
   {% verbatim %}
   <ul>
     {{#each policys}}
-    <li policy-id="{{policyId}}">{{description}}</li>
+    <li policy-id="{{policyId}}">
+      <a href="/policy/{{policyId}}"><strong>{{description}}</strong></a>
+      <input type="text" name="description" value="{{description}}" style="display: none;"/>
+      <button type="button" class="close" action="remove" ><i class="glyphicon glyphicon-remove"></i></button>
+      <button type="button" class="close" action="edit" ><i class="glyphicon glyphicon-pencil"></i></button>
+    </li>
     {{/each}}
   </ul>
   <div id="policy-show-area"></div> 

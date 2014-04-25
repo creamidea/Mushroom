@@ -8,7 +8,8 @@
   </p>
   <p id="plant-id-{{plantId}}">
     <span>植物名称</span>
-    <a href="/plant/{{plantId}}"><strong>{{plantName}}</strong></a>
+    <!-- <a href="/plant/{{plantId}}"><strong>{{plantName}}</strong></a> -->
+    <strong>{{plantName}}</strong>
   </p>
   {% endverbatim %} 
 </script>
@@ -73,45 +74,102 @@
 
 <script id="room-template" type="text/x-handlebars-template">
   {% verbatim %} 
-  <li id="room-{{roomId}}" class="room" rid="{{roomId}}">
-    <div class="widget">
-      <a href="#/1/policy/add">
-        <i class="glyphicon glyphicon-th-list">增加养殖策略</i>
-      </a>
-      <a href="#/1/policy/now">
-        <i class="glyphicon glyphicon-tasks">正在执行任务</i>
-      </a>
-      <a href="#/1/controller/list">
-        <i class="glyphicon glyphicon-cog">设备控制面板</i>
-      </a>
-    </div> 
+  <div id="room-{{roomId}}" class="room" rid="{{roomId}}">
+
     <div class="meta-info">
       <p id="room-id-{{roomId}}">
         <span>房间名称</span>
         <a href="/room/{{roomId}}"><strong>{{roomName}}</strong></a>
+        <!-- <input type="text" name="rname" value="{{roomName}}" class="hide"/> -->
+        <!-- <button type="button" class="close" action="edit-rname"> -->
+        <!--   <i class="glyphicon glyphicon-pencil"></i> -->
+        <!-- </button> -->
       </p>
       <p id="plant-id-{{plantId}}">
         <span>植物名称</span>
-        <a href="/plant/{{plantId}}"><strong>{{plantName}}</strong></a>
-      </p>
+        <!-- <a href="/plant/{{plantId}}"><strong>{{plantName}}</strong></a> -->
+        <strong>{{plantName}}</strong>
+        <!-- <input type="text" name="rname" value="{{roomName}}" class="hide"/> -->
+        <!-- <button type="button" class="close" action="edit-pname"> -->
+        <!--   <i class="glyphicon glyphicon-pencil"></i> -->
+        <!-- </button> -->
+       </p>
+    </div>
+
+    <div class="widget">
+      <!-- <a href="#/{{roomId}}/sensor/list"> -->
+      <!--   <i class="glyphicon glyphicon-cog">传感器列表</i> -->
+      <!-- </a> -->
+      <a href="/policy/create/?roomId={{roomId}}">
+        <i class="glyphicon glyphicon-th-list">增加养殖策略</i>
+      </a>
+      <a href="/policy/now/room/{{roomId}}/" pid="{{nowPolicy}}">
+        <i class="glyphicon glyphicon-tasks">正在执行任务</i>
+      </a>
+      <a href="/controller/list/room/{{roomId}}/">
+        <i class="glyphicon glyphicon-cog">设备控制面板</i>
+      </a>
     </div> 
-    <div class="env">
-      <div class="brightness">
-        <p class="{{brightness}}">{{brightness}}</p>
-      </div> 
-      <div class="average">
-        {{#each average}}
-        <p type="{{@key}}">
-          <!-- <span>平均温度</span> -->
-          <strong>{{this}}</strong>
-        </p>
-        {{/each}}
-      </div> 
-      <div class="timeline">
-        <p>{{time}}</p>
-      </div>   
+ 
+    <div class="latest-data"> </div> 
+
+    <div class="widget-panel">
+      <button type="button" class="close hide">
+        <i class="glyphicon glyphicon-remove"></i>
+      </button>
+      <div class="panel panel-default" name="sensor-list">
+        <div class="sensor-list panel-body">
+          {{#each sensors}}
+          <div class="{{@key}}">
+            <p>{{cn-name}}</p>
+            {{#each this}}
+            <ul class="pagination">
+              <li><a href="/sensor/{{this}}">{{this}}</a></li>
+            </ul>
+            {{/each}}
+          </div> 
+          {{/each}}
+        </div> <!-- sensor list -->
+      </div>   <!-- sensor list panel -->
+      <div class="panel panel-default" name="policy-add"></div> 
+      <div class="panel panel-default" name="policy-now"></div> 
+      <div class="panel panel-default" name="controller-list"></div> 
+    </div>
+    
+    <div class="image">
+      <img src="/static/img/photo.png" class="" alt="" />
     </div> 
-  </li> 
+
+  </div> 
+
+  {% endverbatim %} 
+</script>
+
+<script id="room-latest-data-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+
+  <div class="time">{{sense_time}}</div> 
+
+  {{#each sense_data}}
+  <div class="sensor"  type="{{@key}}">
+    <p>{{cn-name}}</p>
+    {{#each this}}
+    <div class="data" sid="{{id}}"><strong><a href="/sensor/{{id}}/">{{data}}</a></strong></div> 
+    {{/each}}
+  </div> 
+  {{/each}}
+
+  {% endverbatim %} 
+</script>
+
+<script id="room-average-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {{#each average}}
+  <p type="{{@key}}">
+    <!-- <span>平均温度</span> -->
+    <strong>{{this}}</strong>
+  </p>
+  {{/each}}
   {% endverbatim %} 
 </script>
 <!-- 房间外层模板 -->

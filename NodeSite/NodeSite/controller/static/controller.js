@@ -4,14 +4,45 @@ var ControllerList, getController, getControllerList, putController, renderContr
 
 ControllerList = (function() {
   function ControllerList(params) {
-    var $renderTo, renderTo;
-    renderTo = params.renderTo, this.templateName = params.templateName;
-    console.log("[controller.coffee]", renderTo);
-    this.$renderTo = $renderTo = $(renderTo);
+    var $renderTo, source, templateName;
+    $renderTo = params.$renderTo, this.roomId = params.roomId;
     $renderTo.on("click", "input[type=checkbox]", $.proxy(this.clickEvent, this));
-    this.intervalTime = 60000;
-    this.interval();
-    this.roomId = null;
+    this.$renderTo = $renderTo;
+    this.intervalTime = 4000;
+    templateName = "#controller-list-template";
+    source = $(templateName).html();
+    this.template = Handlebars.compile(source);
+    Handlebars.registerHelper("cn_name", function(info) {
+      var cnName, dict, enName;
+      dict = {
+        "yello_light": "黄灯",
+        "blue_light": "蓝灯",
+        "red_light": "红灯",
+        "paifeng_fan": "排风扇",
+        "yasuoji": "压缩机",
+        "xunhuan_fan": "循环风",
+        "jinfeng_fan": "进风扇",
+        "jiashiqi": "加湿器",
+        "neiji": "内机"
+      };
+      enName = info.data.key;
+      return cnName = dict[enName];
+    });
+    Handlebars.registerHelper("checked", function() {
+      var checked, state;
+      state = this.state;
+      if (state === 1) {
+        checked = "checked";
+      } else {
+        checked = "";
+      }
+      return checked;
+    });
+    getControllerList(this.roomId, (function(_this) {
+      return function(data) {
+        return _this.render(data.body);
+      };
+    })(this));
   }
 
   ControllerList.prototype.clickEvent = function(e) {
@@ -24,7 +55,11 @@ ControllerList = (function() {
       action = "off";
     }
     controllerId = $elt.attr("cid");
-    return putController(controllerId, action);
+    $elt.parent().append("<p>这在处理中。。。</p>");
+    return putController(controllerId, action, {
+      cl: this,
+      $elt: $elt
+    });
   };
 
   ControllerList.prototype.update = function(cid, value) {
@@ -41,21 +76,11 @@ ControllerList = (function() {
   };
 
   ControllerList.prototype.render = function(context) {
-    var $renderTo, clHTML, source, template, templateName;
-    $renderTo = this.$renderTo, templateName = this.templateName;
-    this.roomId = context[0].roomId;
-    source = $(templateName).html();
-    template = Handlebars.compile(source);
-    Handlebars.registerHelper("checked", function() {
-      var checked, state;
-      state = this.state;
-      if (state === "on") {
-        checked = "checked";
-      } else {
-        checked = "";
-      }
-      return checked;
-    });
+    var $renderTo, clHTML, template;
+    if (context === void 0) {
+      context = this.context;
+    }
+    $renderTo = this.$renderTo, template = this.template;
     clHTML = template({
       context: context
     });
@@ -63,24 +88,21 @@ ControllerList = (function() {
     return $renderTo.html(clHTML);
   };
 
-  ControllerList.prototype.interval = function() {
-    return setInterval((function(_this) {
+  ControllerList.prototype.sync = function() {
+    return this.timer = setInterval((function(_this) {
       return function() {
         if (!_this.roomId) {
           return;
         }
-        return $.ajax({
-          url: "/controller/update/room/" + _this.roomId + "/",
-          type: "GET",
-          success: function(data) {
-            return _this.render(data.body);
-          },
-          fail: function() {
-            return alert("controller update failed");
-          }
+        return getControllerList(_this.roomId, function(data) {
+          return _this.render(data.body);
         });
       };
     })(this), this.intervalTime);
+  };
+
+  ControllerList.prototype.stop = function() {
+    return clearInterval(this.timer);
   };
 
   return ControllerList;
@@ -123,18 +145,24 @@ getControllerList = function(roomId, callback) {
 
 getController = function(controllerId, callback) {};
 
-putController = function(cid, action) {
+putController = function(cid, action, extra) {
   return $.ajax({
     url: "/controller/" + cid + "/",
     type: "PUT",
+    context: extra,
     data: {
       action: action
     },
     success: function(data) {
-      return alert(data.body);
+      if (data.code === 0) {
+        return $('p', this.$elt.parent()).remove();
+      } else {
+        this.cl.render();
+        return alert(data.body);
+      }
     },
     fail: function() {
-      return alert("PUT CONTROLLER CONNECTION FAIL!");
+      return alert("请检查网络连接！");
     }
   });
 };

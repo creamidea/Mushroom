@@ -1,0 +1,53 @@
+@font-face {
+    font-family: 'TitilliumText22L600wt';
+    src: url('titillium/titilliumtext22l004-webfont.eot');
+    src: url('titillium/titilliumtext22l004-webfont.eot?#iefix') format('embedded-opentype'),
+         url('titillium/titilliumtext22l004-webfont.woff') format('woff'),
+         url('titillium/titilliumtext22l004-webfont.ttf') format('truetype'),
+         url('titillium/titilliumtext22l004-webfont.svg#TitilliumText22L600wt') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'TitilliumText22L600wt';
+}
+h1 {
+	font-size: 22px;
+	line-height: 26px;
+}
+h2 {
+	font-size: 20px;
+	line-height: 24px;
+}
+h3 {
+	font-size: 18px;
+	line-height: 22px;
+}
+h4 {
+	font-size: 16px;
+	line-height: 20px;
+}
+h5 {
+	font-size: 14px;
+	line-height: 20px;
+}
+h6 {
+	font-size: 12px;
+	line-height: 18px;
+}
+.dropcap {
+	font-size:45px;
+	font-family: 'TitilliumText22L600wt';
+}
+.menu {
+	font-family: 'TitilliumText22L600wt';
+}
+.menu ul {
+	font-family: 'TitilliumText22L600wt';
+}
+
+#filtering-nav li {
+	font-family: 'TitilliumText22L600wt';
+}

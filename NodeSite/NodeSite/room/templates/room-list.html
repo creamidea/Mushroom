@@ -20,6 +20,8 @@
     </div>
   </div>
 </div>
+<canvas id="foo"></canvas>
+
 {% endblock %}
 
 {% block extra_js %}
@@ -31,6 +33,9 @@
 <!-- 控制器处理模块 -->
 {% include "controller-script.html" %}
 {% compressed_js 'controller' %}
+
+<!-- gauge -->
+{% compressed_js 'gauge' %}
 
 <!-- 房间处理模块 -->
 {% include "room-script.html" %}

@@ -1,0 +1,53 @@
+@font-face {
+    font-family: 'ArvoRegular';
+    src: url('arvo/Arvo-Regular-webfont.eot');
+    src: url('arvo/Arvo-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('arvo/Arvo-Regular-webfont.woff') format('woff'),
+         url('arvo/Arvo-Regular-webfont.ttf') format('truetype'),
+         url('arvo/Arvo-Regular-webfont.svg#ArvoRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'ArvoRegular';
+}
+h1 {
+	font-size: 22px;
+	line-height: 26px;
+}
+h2 {
+	font-size: 20px;
+	line-height: 24px;
+}
+h3 {
+	font-size: 18px;
+	line-height: 22px;
+}
+h4 {
+	font-size: 16px;
+	line-height: 20px;
+}
+h5 {
+	font-size: 14px;
+	line-height: 20px;
+}
+h6 {
+	font-size: 12px;
+	line-height: 18px;
+}
+.dropcap {
+	font-size:45px;
+	font-family: 'ArvoRegular';
+}
+.menu {
+	font-family: 'ArvoRegular';
+}
+.menu ul {
+	font-family: 'ArvoRegular';
+}
+
+#filtering-nav li {
+	font-family: 'ArvoRegular';
+}

@@ -3,12 +3,15 @@
 
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.http import require_POST, require_GET
+from django.contrib.auth.decorators import login_required
 # from NodeSite.db.db_operator import db_inst as db
-from NodeSite.db import db_operator as db
+from NodeSite.db.db_operator import DbOperator
 from .models import RoomManagy
 
 from ..decorators import json_response
 
+# db = DbOperator()
 
 def hello(request):
     return HttpResponse("Hello, world")
@@ -21,16 +24,26 @@ def view(request):
                    }
     )
 
-@json_response
+
 def roomlist(request):
     # rm = RoomManagy()
-    data = db.get_all_room()
+    if request.is_ajax():
+        return ajax_roomlist(request)
+    else:
+        return HttpResponse("hello")
     # print "[ROOM LIST DATA:]", data
+
+@json_response
+def ajax_roomlist(request):
+    db = DbOperator()
+    data = db.get_all_room()
     return dict(code=0, body=data)
 
 @json_response
 def ajax_room(request, room_id):
+    db = DbOperator()
     data = db.get_room_info(room_id)
+    # print "[ajax_room]", data
     return dict(body=data)
 
 def room(request, room_id):
@@ -55,5 +68,14 @@ def name(request, room_id):
         return dict(body="create room name")
     elif request.method == 'PUT':
         new_description = "test"
+        db = DbOperator()
         result = db.update_room_name(room_id, new_description)
         return dict(code=result)
+
+@json_response
+@login_required
+@require_GET
+def desc_list(request):
+    db = DbOperator()
+    room_desc_list = db.room_dict
+    return dict(body=room_desc_list)

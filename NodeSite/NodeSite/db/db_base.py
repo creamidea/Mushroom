@@ -3,8 +3,40 @@
 from head import *
 from db_env import *
 
-class MssqlConnection:  
-    def __init__(self, serverIp = db_conn_info['HOST'], dbName = db_conn_info['DATABASE'], \
+class MssqlConnection:
+    def __init__(self, serverIp = db_conn_info['HOST'], dbName = db_conn_info['DATABASE'], uid = db_conn_info['USER'], pwd = db_conn_info['PASSWORD']):
+        #: 服务器地址
+        self.host = serverIp
+        #: 数据据库名称
+        self.db_name = dbName
+        #: 登录用户
+        self.user = uid
+        #: 登录密码
+        self.password = pwd
+        #: 数据库连接句柄  
+        self.handler = ''
+        #: 连接游标
+        self.cursor = ''
+        
+        #: 植物表对象
+        self.plant_dict = {}
+        #: 
+        self.plant_name2id = {}
+        self.plant_id2name = {}
+        #: 传感器表对象
+        self.sensor_dict = {}
+        self.sensor_name2id = {}
+        self.sensor_id2name = {}
+        #: 房间表对象
+        self.room_dict = {}
+        #: 
+        self.room_desc2id = {}
+        self.room_id2desc = {}
+        #: 控制器ID与房间号映射
+        self.controller_dict = {}
+        
+        self.load_table()
+    def __init__bk(self, serverIp = db_conn_info['HOST'], dbName = db_conn_info['DATABASE'], \
                  uid = db_conn_info['USER'], pwd = db_conn_info['PASSWORD']):
         #: 服务器地址
         self.host = serverIp
@@ -21,10 +53,12 @@ class MssqlConnection:
         
         #: 植物表对象
         self.plant_dict = {}
+        self.plant_name2id = {}
         #: 传感器表对象
         self.sensor_dict = {}
         #: 房间表对象
         self.room_dict = {}
+        self.room_desc2id = {}
         #: 控制器ID与房间号映射
         self.controller_dict = {}
         
@@ -37,7 +71,8 @@ class MssqlConnection:
         if self.handler == '':
             self.handler = pyodbc.connect(driver='{SQL Server}', server=self.host, \
                                           database=self.db_name, uid=self.user, pwd=self.password, unicode_results = True)  
-            self.cursor=self.handler.cursor()
+            self.cursor = self.handler.cursor()
+            
     
     def close(self): 
         """
@@ -60,8 +95,16 @@ class MssqlConnection:
         :param sql_str: 待执行的SQL语句
         :rtype: 查询结果              
         """   
-        self.cursor.execute(sql_str)  
-        return self.cursor.fetchall()  
+        try:
+            self.cursor.execute(sql_str)
+        except Exception, e:
+            log_msg = str(e)
+            print log_msg
+            # log_handler.error(log_msg)
+            return ERR
+        else:
+            return self.cursor.fetchall()  
+
   
     def querySome(self, sql_str, maxcnt):  
         """
@@ -104,16 +147,29 @@ class MssqlConnection:
         :param sql_str: 待执行的SQL语句 
         :rtype: 成功返回生效的数据条数， 失败返回-1 
         """  
-        cnt = self.cursor.execute(sql_str).rowcount
-        self.handler.commit()
-        return cnt
-    
-    
+        try:
+            cnt = self.cursor.execute(sql_str).rowcount
+            self.handler.commit()
+        except Exception, e:
+            log_msg = str(e)
+            print log_msg
+            # log_handler.error(log_msg)
+            return ERR
+        else:
+            return cnt
     def load_table(self):
         """
         将数据库中部分表加载到内存
         """
         self.connect()
+        
+        sql_str = 'select room_id, room_description from tb_room'
+        query_list = self.queryAll(sql_str)
+        for i in query_list:
+            self.room_dict[i[0]] = i[1]
+            self.room_desc2id[i[1]] = i[0]
+            self.room_id2desc[i[0]] = i[1]
+            
         sql_str = 'select plant_id, plant_name from tb_plant'
         query_list = self.queryAll(sql_str)
         for i in query_list:
@@ -121,6 +177,9 @@ class MssqlConnection:
             temp.plant_id      = i[0]
             temp.plant_name    = i[1]
             self.plant_dict[temp.plant_name] = temp
+            
+            self.plant_name2id[i[1]] = i[0]
+            self.plant_id2name[i[0]] = i[1]
         
         sql_str = 'select sensor_id, sensor_type, room_id, state from tb_sensor'
         query_list = self.queryAll(sql_str)
@@ -130,8 +189,48 @@ class MssqlConnection:
             temp.sensor_name    = i[1]
             temp.room_id        = i[2]
             temp.state          = i[3]
+            
             self.sensor_dict[temp.sensor_name] = temp
+            self.sensor_name2id[temp.sensor_name] = temp.sensor_id
+            self.sensor_id2name[temp.sensor_id] = temp.sensor_name
+            
+        sql_str = 'select controller_id, room_id, controller_type from tb_controller'
+        query_list = self.queryAll(sql_str)
+        #TODO: 这里可定有问题，每个房间有多个控制器，但是否
+        for i in query_list:
+            self.controller_dict[i[1]] = {i[2]: i[0]}
+        self.close()
+    def load_table_bk(self):
+        """
+        将数据库中部分表加载到内存
+        """
+        self.connect()
         
+        sql_str = 'select room_id, room_description from tb_room'
+        query_list = self.queryAll(sql_str)
+        for i in query_list:
+            self.room_dict[i[0]] = i[1]
+            self.room_desc2id[i[1]] = i[0]
+            
+        sql_str = 'select plant_id, plant_name from tb_plant'
+        query_list = self.queryAll(sql_str)
+        for i in query_list:
+            temp = TablePlant()
+            temp.plant_id      = i[0]
+            temp.plant_name    = i[1]
+            self.plant_dict[temp.plant_name] = temp
+            self.plant_name2id[temp.plant_name] = temp.plant_id
+            
+        sql_str = 'select sensor_id, sensor_type, room_id, state from tb_sensor'
+        query_list = self.queryAll(sql_str)
+        for i in query_list:
+            temp = TableSensor()
+            temp.sensor_id      = i[0]
+            temp.sensor_name    = i[1]
+            temp.room_id        = i[2]
+            temp.state          = i[3]
+            self.sensor_dict[temp.sensor_name] = temp
+
         sql_str = 'select controller_id, room_id, controller_type from tb_controller'
         query_list = self.queryAll(sql_str)
         #TODO: 这里可定有问题，每个房间有多个控制器，但是否
@@ -204,7 +303,70 @@ class MssqlConnection:
                     continue
         self.close()
         print "Translate to Absolute Time Done!"
+    
+    
+    def insert_sensor(self, sensor_id, sensor_type, room_id, position = '', state = ON):
+        """
+        插入传感器信息
         
+        :param sensor_id: 传感器ID 整型
+        :param sensor_type: 传感器类型 字符串
+        :param room_id: 房间ID 整型
+        :param position: 传感器位置 
+        :param state: 传感器当前状态
+        :rtype: SUC 成功， FAI 失败， ERR 异常
+        """
+        sql_str = '''insert into tb_sensor(sensor_id, sensor_type, room_id, position, state) 
+                    values(%d, '%s', %d, '%s', %d)''' %(sensor_id, sensor_type, room_id, position, state)
+        try:
+            self.connect()
+            self.executeDML(sql_str)
+            self.close()
+            return SUC
+        except Exception:
+            return FAI
+    
+    def insert_controller(self, controller_id, controller_type, room_id, state = OFF):
+        """
+        插入控制器信息
+        
+        :param controller_id: 控制器ID
+        :param controller_type: 控制器类型 字符串
+        :param room_id: 房间ID
+        :param state: 传感器当前状态
+        :rtype: SUC 成功， FAI 失败， ERR 异常
+        """
+        sql_str = '''insert into tb_controller(controller_id, controller_type, room_id, state) 
+                    values(%d, '%s', %d, %d)''' %(controller_id, controller_type, room_id, state)
+        try:
+            self.connect()
+            self.executeDML(sql_str)
+            self.close()
+        except Exception:
+            return FAI
+        return SUC
+    
+    def insert_instance(self, room_id, sense_time):
+        try:
+            self.connect()
+            sql_str = "insert into tb_instance(room_id, sense_time) values(%d, '%s')" %(room_id, sense_time)
+            self.executeDML(sql_str)
+            sql_str = "select instance_id from tb_instance where room_id = %d and sense_time = '%s'" %(room_id, sense_time)
+            result = self.queryAll(sql_str)
+            self.close()
+            return result[0][0]
+        except IndexError:
+            log_msg = 'cannot create instance!'
+            # log_handler.error(log_msg)
+            return FAI
+    
+    def insert_sensor_data(self, instance_id, sensor_id, value):
+        sql_str = 'insert into tb_data(instance_id, sensor_id, data) values(%d, %d, %f)' %(instance_id, sensor_id, value)
+        self.connect()
+        self.executeDML(sql_str)
+        self.close()
+        return SUC
+      
     def insert_data(self, room_id, sense_time, temperature, humidity, co2, light, \
                     temperature_id = -1, humidity_id = -1, co2_id = -1, light_id = -1):
         """
@@ -227,8 +389,9 @@ class MssqlConnection:
         self.connect()
 #         start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         try:
-            sql_str = u"{call sp_insert_sense_data(%d, '%s', %f, %f, %f, %f, %d, %d, %d, %d)}" \
+            sql_str = "{call sp_insert_sense_data(%d, '%s', %f, %f, %f, %f, %d, %d, %d, %d)}" \
             %(room_id, sense_time, temperature, humidity, co2, light, temperature_id, humidity_id, co2_id, light_id) 
+            print sql_str
             self.executeDML(sql_str)
         except KeyError: 
             print 'sensor name error'
@@ -281,13 +444,51 @@ class MssqlConnection:
                                             where policy_id = %d order by policy_instance_id desc''' %(policy_id))[0][0]
             self.close()
             return instance_id
-        except Exception, e:
+        except KeyInterrupt, e:
             print 'in create_policy_instance: '
             print e
             return -1
-    
-    def create_rule(self, policy_id, interval_date, hours, temperature_peak, temperature_valle, 
-                    humidity_peak, humidity_valle, co2_peak, co2_valle, light_color):
+        
+    def create_rule(self, policy_id, rules):
+        """
+        插入养殖模式
+        
+        :param policy_id: 策略号
+        :param rules: 执行规则列表
+        :rtype: SUC
+        """
+        self.connect()
+        for one_rule in rules:
+            sql_str = u'''insert into tb_rule(
+                            policy_id, 
+                            interval_date, 
+                            hours, 
+                            temperature_peak, 
+                            temperature_valle,
+                            humidity_peak, 
+                            humidity_valle, 
+                            co2_peak, 
+                            co2_valle, 
+                            reserved1_peak, 
+                            reserved1_valle
+                        )values( %d, %d, %d, %f, %f, %f, %f, %f, %f, %f, %f)''' \
+                            %(int(policy_id),\
+                             int(one_rule['date']), \
+                             int(one_rule['hour']), \
+                             one_rule['temperature'][1], \
+                             one_rule['temperature'][0],\
+                             one_rule['humidity'][1], \
+                             one_rule['humidity'][0],\
+                             one_rule['co2'][1], \
+                             one_rule['co2'][0], \
+                             one_rule['brightness'][1], \
+                             one_rule['brightness'][0],
+                        )
+            self.executeDML(sql_str)
+        self.close()
+        return SUC
+
+    def create_rule_bk(self, policy_id, interval_date, hours, temperature_peak, temperature_valle, humidity_peak, humidity_valle, co2_peak, co2_valle, brightness_peak, brightness_valle, light_color = ''):
         """
         插入养殖模式
         
@@ -305,10 +506,10 @@ class MssqlConnection:
         """
         self.connect()
         sql_str = u'''insert into tb_rule(policy_id, interval_date, hours, temperature_peak, temperature_valle,
-        humidity_peak, humidity_valle, co2_peak, co2_valle, light_color)
-        values( %d, %d, %d, %f, %f, %f, %f, %f, %f, '%s')''' \
+        humidity_peak, humidity_valle, co2_peak, co2_valle, reserved1_peak, reserved1_valle)
+        values( %d, %d, %d, %f, %f, %f, %f, %f, %f, %f, %f)''' \
         %(policy_id, interval_date, hours, temperature_peak, temperature_valle,\
-          humidity_peak, humidity_valle, co2_peak, co2_valle, light_color)
+          humidity_peak, humidity_valle, co2_peak, co2_valle, brightness_peak, brightness_valle)
         self.executeDML(sql_str)
         self.close()
         
@@ -365,7 +566,6 @@ class MssqlConnection:
         self.close()
         return temp
         
-                
 if __name__ == "__main__":  
     serverIp = db_conn_info['HOST']
     dbName = db_conn_info['DATABASE']
@@ -374,6 +574,6 @@ if __name__ == "__main__":
 #     conn=MssqlConnection(serverIp,dbName,uid,pwd)
     conn=MssqlConnection()
     
-    temp = conn.get_threshold('2014-01-06 16:07:00', 1)
+    temp = conn.get_threshold(1, '2014-01-06 16:07:00')
     print temp[0][8]
     print (temp[1][0], str(temp[1][1]))

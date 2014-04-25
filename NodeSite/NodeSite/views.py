@@ -38,7 +38,7 @@ def serialize(target="json"):
 
 def home(request):
     if not request.user.is_authenticated():
-        return render(request,"login-1.html", dict(title="蘑菇房监控平台"))
+        return render(request,"signin.html", dict(title="蘑菇房监控平台"))
     else:
         print ">>>>", request.path
         # return HttpResponseRedirect(redirect_to="/")

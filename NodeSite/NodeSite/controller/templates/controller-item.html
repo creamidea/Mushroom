@@ -1,0 +1,21 @@
+{% extends 'room-item.html' %}
+{% load compressed %}
+
+<!-- 绘制图表 -->
+{% block widget %}
+   <div id="controller-list" class="panel panel-default" name="controller-list"></div> 
+<!-- 控制器处理模块 -->
+{% include "controller-script.html" %}
+{% compressed_js 'controller' %}
+<script type="text/javascript">
+$(function() {
+  roomId = (window.location.pathname).replace(/(.*)\/room\/(\d+)\//g, "$2")
+  if(roomId) {
+      cl = new ControllerList(
+           {$renderTo: $("#controller-list"),
+            roomId: roomId}
+           )
+  }
+})
+</script>
+{% endblock %}

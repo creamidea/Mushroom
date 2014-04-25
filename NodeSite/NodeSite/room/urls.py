@@ -12,4 +12,6 @@ urlpatterns = patterns(
     url(r'^(?P<room_id>\d+)/$', room.room,),
     # 修改房间名称
     url(r'^(?P<room_id>\d+)/name/$', room.name),
+    # 获取房间描述列表
+    url(r'^description/list/$', room.desc_list),
 )

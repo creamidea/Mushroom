@@ -5,7 +5,10 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from ..decorators import json_response
-from NodeSite.db import db_operator as db
+# from NodeSite.db import db_operator as db
+from ..db.db_operator import DbOperator
+
+db = DbOperator()
 
 def hello(request):
     return HttpResponse("Hello, world")
@@ -26,7 +29,8 @@ def average(request):
 
 @json_response
 def room_sensor_list(request, room_id):
-    data = db.get_room_sensor_list(room_id)
+    data = db.get_room_sensors(room_id)
+    # return data
     return dict(body=data)
     
     

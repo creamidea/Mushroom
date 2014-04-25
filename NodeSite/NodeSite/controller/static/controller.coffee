@@ -1,15 +1,56 @@
 'use strict'
 
+# 使用方式
+# 记得还有一个模板文件 
+# @cl = new ControllerList
+#   $renderTo: $renderTo
+#   roomId: @roomId
+
 class ControllerList
   constructor: (params) ->
-    {renderTo, @templateName} = params
-    console.log "[controller.coffee]", renderTo
-    @$renderTo = $renderTo = $(renderTo)
+    {$renderTo, @roomId} = params
+    # console.log "[controller.coffee]", $renderTo
     $renderTo.on "click", "input[type=checkbox]", $.proxy @clickEvent, @
 
-    @intervalTime = 60000       # 1 minitus
-    @interval()                 # 启动更新器
-    @roomId = null              # null值时说明没有
+    @$renderTo = $renderTo
+    @intervalTime = 4000       # 1 minitus
+    templateName = "#controller-list-template"
+    source = $(templateName).html()
+    @template = Handlebars.compile(source)
+    # 这里是handlebars帮助函数 
+    Handlebars.registerHelper "cn_name", (info) ->
+      # this执行的是context中的每一条数据，arguments指向什么，我也不知道。
+      # console.log arguments, this
+      dict =
+        "yello_light": "黄灯"
+        "blue_light": "蓝灯"
+        "red_light": "红灯"
+        "paifeng_fan": "排风扇"
+        "yasuoji": "压缩机"
+        "xunhuan_fan": "循环风"
+        "jinfeng_fan": "进风扇"
+        "jiashiqi": "加湿器"
+        "neiji": "内机"
+      enName = info.data.key
+      cnName = dict[enName]
+    Handlebars.registerHelper "checked", () ->
+      # this执行的是context中的每一条数据，arguments指向什么，我也不知道。
+      # console.log arguments, this
+      state = @state
+      if state is 1
+        checked = "checked"
+      else
+        checked = ""
+      return checked
+
+    # 初次运行
+    getControllerList @roomId, (data) =>
+      # console.log ">>>data:", data
+      @render data.body
+      
+    # @sync()                 # 启动更新器
+    # @stop()
+    
   clickEvent: (e) ->
     $elt = $(e.target)
     answer =  $elt.prop('checked')
@@ -19,7 +60,8 @@ class ControllerList
       action = "off"
     controllerId = $elt.attr("cid")
     # alert action+":"+controllerId
-    putController controllerId, action
+    $elt.parent().append("<p>这在处理中。。。</p>")
+    putController controllerId, action, {cl: this, $elt:$elt}
 
   update: (cid, value) ->
     if not cid or not value then return
@@ -30,36 +72,23 @@ class ControllerList
       $switch.removeAttr("checked")
       
   render: (context) ->
-    {$renderTo, templateName} = @
-    @roomId = context[0].roomId
-    source = $(templateName).html()
-    # console.log source
-    template = Handlebars.compile(source)
-    # 这里是handlebars帮助函数 
-    Handlebars.registerHelper "checked", () ->
-      # this执行的是context中的每一条数据，arguments指向什么，我也不知道。
-      # console.log arguments, this
-      state = @state
-      if state is "on"
-        checked = "checked"
-      else
-        checked = ""
-      return checked
+    if context is undefined
+      context = @context
+    {$renderTo, template} = @
     clHTML = template {context: context}
+    # console.log context, clHTML
     @context = context
     $renderTo.html clHTML
     
-  interval: () ->
-    setInterval () =>
+  sync: () ->
+    @timer = setInterval () =>
       if not @roomId then return
-      $.ajax
-        url: "/controller/update/room/#{@roomId}/"
-        type: "GET"
-        success: (data) =>
-          @render data.body
-        fail: () ->
-          alert "controller update failed"
+      getControllerList @roomId, (data) =>
+        @render data.body
     , @intervalTime
+    
+  stop: () ->
+    clearInterval @timer
   
 renderControllerList = (params) ->
   # 渲染控制器列表
@@ -76,6 +105,7 @@ getControllerList = (roomId, callback) ->
     callback = roomId
     url = "/controller/list/"
   else
+    # url = "/controller/list/room/1/"
     url = "/controller/list/room/#{roomId}/"
   $.ajax
     url: url
@@ -89,14 +119,21 @@ getControllerList = (roomId, callback) ->
 getController = (controllerId, callback) ->
   return
 
-putController = (cid, action) ->
+putController = (cid, action, extra) ->
   # cid就是控制器的编号
   $.ajax
     url: "/controller/#{cid}/"
     type: "PUT"
+    context: extra
     data:
       action: action
     success: (data) ->
-      alert data.body
+      # console.log ">>>[controller]data:", data
+      if data.code is 0
+        $('p', @$elt.parent()).remove()
+      else
+        @cl.render()
+        alert data.body
     fail: () ->
-      alert "PUT CONTROLLER CONNECTION FAIL!"
+      # alert "PUT CONTROLLER CONNECTION FAIL!"
+      alert "请检查网络连接！"

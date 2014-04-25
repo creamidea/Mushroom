@@ -3,22 +3,45 @@
 
 <!-- 绘制图表 -->
 {% block content %}
-<style>
-  .chart svg {
-  height: 400px;
-  }
-</style>
-
 <!-- <h1>房间{{room_id}}</h1> -->
-
-<!-- <p>这里包含房间的基本参数</p> -->
-<div id="room-{{room_id}}" class="room"></div> 
-
-<div id="charts-area" class="chart list">
-  <div id="realtime-chart" ></div> 
-</div> 
-
-<div id="search-chart-area" class="search"></div> 
+<div class="row">
+  <!-- <p>这里包含房间的基本参数</p> -->
+  <div class="col-md-4">
+    <div id="room-{{room_id}}"></div> 
+  </div> 
+  
+  <div class="col-md-8">
+    {% block widget%}
+    <div id="download-area">
+      <form method="get" id="download-form" action="/data/download/" role="form" class="form-inline">
+        <div class="form-group">
+          <label class="" for="">房间{{room_id}}过往数据下载</label>
+        </div>
+        <input type="hidden" name="roomId" value="{{room_id}}">
+        <br />
+        <div class="form-group">
+          <label class="" for="">起始时间</label>
+          <input type="date" class="form-control datepicker" id="datepicker0" placeholder="起始时间" name="startTime">
+        </div>
+        <div class="form-group">
+          <label class="" for="">终止时间</label>
+          <input type="date" class="form-control datepicker" id="datepicker1" placeholder="终止时间" name="endTime">
+        </div>
+        <button type="submit" class="btn btn-success">下载</button>
+      </form>  
+    </div> 
+    <div id="charts-area" class="chart-list">
+      <section>
+        <div id="realtime-chart"></div> 
+      </section>
+      <!-- <section> -->
+      <!--   <div id="search-chart-area" class="search chart"></div>  -->
+      <!-- </section> -->
+    </div> 
+    {% endblock %}
+  </div> 
+  
+</div> <!-- row end -->
 
 <!-- <\!-- 控制器列表 -\-> -->
 <!-- <div id="controller-list" class="controller list"></div>  -->
@@ -63,6 +86,10 @@
 {% endblock %}
 
 {% block extra_js %}
+
+{% compressed_css 'picker' %}
+{% compressed_js 'picker' %}
+
 {% compressed_js 'd3' %}
 {% compressed_css 'nv.d3' %}
 {% compressed_js 'nv.d3' %}
@@ -70,10 +97,6 @@
 <!-- 策略处理模块 -->
 {% include "policy-script.html" %}
 {% compressed_js 'policy' %}
-
-<!-- 控制器处理模块 -->
-{% include "controller-script.html" %}
-{% compressed_js 'controller' %}
 
 <!-- 房间处理模块 -->
 {% include "room-script.html" %}

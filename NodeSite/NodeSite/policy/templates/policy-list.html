@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load compressed %}
+{% block content %}
+
+  <header>
+    <h1>策略列表</h1>
+    <a href="/policy/create/" style="color: white"><strong><button class="btn btn-success">创建新的策略</button></strong></a>
+  </header>
+  <section>
+    <div id="policy-list"></div> 
+  </section>
+
+{% include 'policy-script.html' %}
+{% compressed_js 'policy_list' %}
+{% endblock %}

@@ -1,4 +1,9 @@
 'use strict'
+sensorEnToCn =
+  "temperature": "温度"
+  "co2": "二氧化碳"
+  "humidity": "湿度"
+  "light": "光照"
 
 getDataFromS = (context)->
   {url, requestData, callback} = context
@@ -10,6 +15,10 @@ getDataFromS = (context)->
       callback data
     fail: (data) ->
       alert "通讯失败"
+    # statusCode: 
+      # 404: ->
+      #   window.location.href = "/404.html"
+
 
 dataPkgForD3 = (data) ->
   # 数据处理
@@ -17,11 +26,13 @@ dataPkgForD3 = (data) ->
   for sensor in data
     sensorType = sensor.sensorType
     if _sensors[sensorType] is undefined then _sensors[sensorType] = []
-    key = "#{sensorType}-#{sensor.sensorId}-#{sensor.position}"
+    sensorTypeCN = sensorEnToCn[sensorType]
+    key = "#{sensorTypeCN}-#{sensor.sensorId}-#{sensor.position}"
     values = []
     _values = sensor.values
     for v in _values
       # 这里将数据处理成D3能够使用的x和y值
+      # values.push [(new Date(v[0])).getTime(), v[1]]
       values.push
         x: (new Date(v[0])).getTime()
         y: v[1]
@@ -37,9 +48,9 @@ drawLineChart = (opt) ->
   # console.log datas
   if elt and data
     nv.addGraph ->
-      chart = nv.models.lineChart().useInteractiveGuideline(true)
+      chart = nv.models.lineChart().color(d3.scale.category10().range()).useInteractiveGuideline(true)
       chart.xAxis.axisLabel(xLabel).tickFormat (d)->
-        d3.time.format('%x')(new Date(d))
+        d3.time.format('%X')(new Date(d))
       chart.yAxis.axisLabel(yLabel).tickFormat(d3.format('.02f'))
       d3.select(elt).datum(data).transition().duration(500).call(chart)
       nv.utils.windowResize(chart.update)
@@ -60,14 +71,32 @@ drawLineWithFocusChart = (opt) ->
     .call(chart)
   nv.utils.windowResize(chart.update)
   chart
-  
+
+
+drawCumulativeLineChart = (opt) ->
+  {elt, data, xLabel, yLabel} = opt 
+  chart = nv.models.cumulativeLineChart()
+    .x (d) -> d[0]
+    .y (d) -> d[1]/100
+    .color d3.scale.category10().range()
+  chart.xAxis.axisLabel(xLabel).tickFormat (d)->
+    d3.time.format('%X')(new Date(d))
+  chart.yAxis
+    .tickFormat(d3.format(',.2f'))
+  d3.select(elt)
+    .datum(data)
+    .transition().duration(500)
+    .call(chart)
+  nv.utils.windowResize(chart.update)
+  chart
+ 
 requestData = (roomId)->
   $.ajax
     url: "/data/room/#{roomId}/"
     type: "get"
     data:
-      startTime: "2323002302"
-      endTime: "3220234098"
+      startTime: "2014-03-30 00:00:00"
+      endTime: "2014-03-31 23:59:59"
     success: (data) ->
       # console.log data.body
       dataBody = data.body
@@ -93,8 +122,7 @@ requestData = (roomId)->
         nv.utils.windowResize(chart.update)
 
     fail: () ->
-      alert "fail"
-
+      alert "GET ROOM DATA FAILED!"
 
 generateData = ->
   sin = []
@@ -149,10 +177,8 @@ duration = 20000
 redraw = ->
   nv.addGraph ->
     chart = nv.models.cumulativeLineChart()
-      .x (d) ->
-        d.x
-      .y (d) ->
-        d.y / 100
+      .x (d) -> d.x
+      .y (d) -> d.y / 100
       .color d3.scale.category10().range()
 
     chart.xAxis.tickFormat (d) ->
@@ -191,6 +217,10 @@ renderRTChart = (datapkg) ->
     sensorEnToCn[key]
   html = template {datapkg:datapkg}
 
+
+# 这里是搜索结果显示图标
+# 使用方式
+# 
 class SearchChart
   constructor: (params) ->
     {roomId, $renderTo} = params
@@ -202,6 +232,9 @@ class SearchChart
       roomId: roomId
       sensorType: "all"
     @$renderTo = $renderTo
+
+    @charts = {}
+    
   blurEvent: (e) ->
     # console.log e, arguments
     $elt = $(e.target)
@@ -212,6 +245,7 @@ class SearchChart
     #   name = $elt.attr("name")
     @data[name] = value
     e.stopPropagation()
+    
   submit: (e) ->
     # console.log @data
     $renderTo = @$renderTo
@@ -221,18 +255,17 @@ class SearchChart
       url: "/search/"
       type: "GET"
       data: data
-      success: (data) ->
+      success: (data) =>
         console.log data
         datapkg = dataPkgForD3(data.body)
         console.log datapkg
         for key, data of datapkg
           # console.log key, data
           # 绘制图表
-          html ='''
-            <div id="search-'''+key+'''-chart" class="chart">
-              <svg></svg>
-            </div>'''
-          $renderTo.append html
+          if @charts[key] is undefined
+            id = "search-#{key}-chart"
+            html ="<div id=#{id} class=chart><svg></svg></div>"
+            @charts[key] = $renderTo.append html
           drawLineChart
             elt: "#search-#{key}-chart svg"
             data: data
@@ -241,6 +274,7 @@ class SearchChart
       fail: ()->
         alert "Search Fail!"
     e.preventDefault()
+    
   render: () ->
     source   = $("#search-chart-template").html()
     template = Handlebars.compile(source)

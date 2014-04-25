@@ -7,19 +7,19 @@ from django.shortcuts import render
 import gevent
 from gevent.event import Event
 
-evt = Event()
+# evt = Event()
 
 def setter():
     '''After 3 seconds, wake all threads waiting on the value of evt'''
     print('A: Hey wait for me, I have to do something')
-    gevent.sleep(5)
+    # gevent.sleep(5)
     print("Ok, I'm done")
-    evt.set()
+    # evt.set()
 
 def waiter():
     '''After 3 seconds the get call will unblock'''
     print("I'll wait for you")
-    evt.wait()  # blocking
+    # evt.wait()  # blocking
     print("It's about time")
     return HttpResponse("Here is system control center")
 
@@ -39,7 +39,7 @@ def hello(request):
     #     gevent.spawn(setter),
     # ])
     # setter()
-    evt.wait(0)  # blocking
+    # evt.wait(0)  # blocking
     print("It's about time")
     title = u"系统控制界面"
     return render(request,

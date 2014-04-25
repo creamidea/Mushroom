@@ -1,0 +1,40 @@
+<script id="policy-now-template" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <div id="room-{{roomId}}">
+    <h3 room-id={{roomId}}>房间：{{roomDesc}}</h3>
+    <a href="javascript:void(0)"><button type="button" class="btn btn-warning" style="width: 12%;">修改</button></a>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>执行时间</th>
+          <th colspan=2>二氧化碳范围</th>
+          <th colspan=2>温度范围</th>
+          <th colspan=2>湿度范围</th>
+          <th colspan=2>光照范围</th>
+          <th>光色</th>
+        </tr>
+      </thead>
+      <tbody> 
+        {{#each context}}
+        <tr>
+          <td class="date">{{changeTime}}</td>
+          {{#each co2}}
+          <td class="co2">{{this}}</td>
+          {{/each}}
+          {{#each temperature}}
+          <td class="temperature">{{this}}</td>
+          {{/each}}
+          {{#each humidity}}
+          <td class="humidity">{{this}}</td>
+          {{/each}}
+          {{#each brightness}}
+          <td class="brightness">{{this}}</td>
+          {{/each}}
+          <td class="lightColor">{{lightColor}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div> 
+  {% endverbatim %} 
+</script>

@@ -70,20 +70,27 @@ def unpack(fd):
         print "unknow fd: %s" % str(type(fd))
         return None
 
-    print "start unpack..."
+    # print "start unpack..."
     version = body = length = None
-    readed = read(1)
-    # print readed
-    if readed == HEAD[0]:
-        readed += read(2)
-        if readed == HEAD[:3]:
-            readed += read(HEAD_BIT - 3)
-            # print readed
-            if readed == HEAD:
-                version = int(b2a_hex(read(VER_BIT)), 16)
-                length = int(b2a_hex(read(LEN_BIT)), 16)
-                body = read(length)
-                # print ">>>", version, length, body
+    # print "start reading..."
+    # TODO:这里的read在gevent模式下会出现问题：This operation would block foreverxs
+    try:
+    # if True:
+        readed = read(1)
+        # print readed
+        if readed == HEAD[0]:
+            readed += read(2)
+            if readed == HEAD[:3]:
+                readed += read(HEAD_BIT - 3)
+                # print readed
+                if readed == HEAD:
+                    version = int(b2a_hex(read(VER_BIT)), 16)
+                    length = int(b2a_hex(read(LEN_BIT)), 16)
+                    body = read(length)
+                    # print ">>>", version, length, body
+    except Exception, e:
+        print ">>>> e:", e
+
     # 返回的body没有被json反序列化
     return (body, version, length)
 

@@ -1,6 +1,28 @@
 <script id="controller-list-template" type="text/x-handlebars-template">
   {% verbatim %} 
-  <ul>
+  <ul class="controller">
+    {{#each context}}
+    <li class="{{@key}}" c_id="{{cid}}">
+      <form>
+        <label for="controller-{{cid}}-switcher">{{cn_name}}</label>
+        <input type="checkbox" name="switcher" id="controller-{{cid}}-switcher" cid="{{cid}}" {{checked}}>
+        <label class="switcher" for="controller-{{cid}}-switcher"></label>
+      </form>
+    </li>
+    {{/each}}
+  </ul>
+  {% endverbatim %} 
+</script>
+
+<script id="room-template=1" type="text/x-handlebars-template">
+  {% verbatim %} 
+  {% endverbatim %} 
+</script>
+
+
+<script id="controller-list-template-2" type="text/x-handlebars-template">
+  {% verbatim %} 
+  <ul class="controller">
     {{#each context}}
     <li class="{{controllerType}}" c_id="{{controllerId}}" r_id="{{roomId}}">
       <form>

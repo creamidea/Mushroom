@@ -8,6 +8,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from NodeSite.views import home
+
 urlpatterns = patterns('',
     # 账户设置，系统设置
     url(r'^$', home, name="home"),

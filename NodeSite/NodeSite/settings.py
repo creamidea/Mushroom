@@ -8,8 +8,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 PROJECT_NAME = 'NodeSite'
 
-MIDDLEWARE_ADDRESS = ("127.0.0.1", "9001")
-# MIDDLEWARE_ADDRESS = ("10.18.50.66", "9001")
+# MIDDLEWARE_ADDRESS = ("127.0.0.1", "9001")
+MIDDLEWARE_ADDRESS = ("10.18.50.66", 9001)
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -148,7 +148,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
-    'django.contrib.admindocs',
+    # 'django.contrib.admindocs',
     
     # 系统设置(discard)
     '%s.mushroom' % PROJECT_NAME,
@@ -177,6 +177,9 @@ INSTALLED_APPS = (
     '%s.webchat' % PROJECT_NAME,
     
 )
+AUTH_USER_MODEL = 'account.MushroomUser'
+# AUTH_PROFILE_MODULE = 'account.MushroomUser'
+LOGIN_URL = '/account/login/'
     
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
@@ -296,6 +299,20 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/main.css',
     },
+    'bootstrap-datetimepicker': {
+        'source_filenames': (
+            'vendor/css/bootstrap-datetimepicker.min.css',
+        ),
+        'output_filename': 'css/bootstrap-datetimepicker.css',
+    },
+    'picker': {
+        'source_filenames': (
+            'vendor/css/picker/default.css',
+            'vendor/css/picker/default.date.css',
+            'vendor/css/picker/default.time.css',
+        ),
+        'output_filename': 'css/picker.min.css',
+    },
     'le': {
         'source_filenames': (
             'less/le.less',
@@ -343,6 +360,13 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/riot.js',
     },
+    'riot': {
+        'source_filenames': (
+            'vendor/js/riot.min.js',
+        ),
+        'output_filename': 'js/riot.js',
+    },
+
     'd3': {
         'source_filenames': (
             'vendor/js/d3.min.js',
@@ -354,6 +378,26 @@ PIPELINE_JS = {
             'vendor/js/nv.d3.min.js',
         ),
         'output_filename': 'js/nv.d3.js',
+    },
+    'gauge': {
+        'source_filenames': (
+            'vendor/js/gauge.min.js',
+        ),
+        'output_filename': 'js/gauge.js',
+    },
+    'bootstrap-datetimepicker': {
+        'source_filenames': (
+            'vendor/js/bootstrap-datetimepicker.min.js',
+        ),
+        'output_filename': 'js/bootstrap-datetimepicker.js',
+    },
+    'picker': {
+        'source_filenames': (
+            'vendor/js/picker/picker.js',
+            'vendor/js/picker/picker.date.js',
+            'vendor/js/picker/picker.time.js',
+        ),
+        'output_filename': 'js/picker.min.js',
     },
     # -----------------------------------------
     'plugins': {
@@ -396,11 +440,41 @@ PIPELINE_JS = {
         ),
         'output_filename': 'room_item.js',
     },
+    'sensor_item': {
+        'source_filenames': (
+            'sensor_item.coffee',
+        ),
+        'output_filename': 'sensor_item.js',
+    },
+    'policy_list': {
+        'source_filenames': (
+            'policy_list.coffee',
+        ),
+        'output_filename': 'policy_list.js',
+    },
     'policy': {
         'source_filenames': (
             'policy.coffee',
         ),
         'output_filename': 'policy.js',
+    },
+    'policy_create': {
+        'source_filenames': (
+            'policy_create.coffee',
+        ),
+        'output_filename': 'policy_create.js',
+    },
+    'policy_now': {
+        'source_filenames': (
+            'policy_now.coffee',
+        ),
+        'output_filename': 'policy_now.js',
+    },
+    'policy_item': {
+        'source_filenames': (
+            'policy_item.coffee',
+        ),
+        'output_filename': 'policy_item.js',
     },
     'data': {
         'source_filenames': (

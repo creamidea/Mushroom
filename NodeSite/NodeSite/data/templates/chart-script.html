@@ -3,12 +3,17 @@
   <!-- 这里是实时更新趋势图显示区域 -->
   {{#each datapkg}}
   <div id="{{@key}}" class="chart">
-    <h1>{{cn-name}}传感器一小时趋势图</h1>
-    <svg></svg>
+    <header>
+      <h1>{{cn-name}}传感器一小时趋势图</h1>
+    </header>
+    <section>
+      <svg></svg>
+    </section>
   </div> 
   {{/each}}
   {% endverbatim %} 
 </script>
+
 <script id="search-chart-template" type="text/x-handlebars-template">
   {% verbatim %} 
   <form class="form-inline" role="form">
@@ -47,7 +52,30 @@
   {{/each}}
   {% endverbatim %} 
 </script>
+<script id="download-form-template" type="text/x-handlebars-template">
+  <form method="get" id="download-form" action="/data/download/" role="form" class="form-inline">
+    <div class="form-group">
+      <label class="" for="">过往数据下载</label>
+    </div>
+    {% verbatim %} 
+    <input type="text" name="sensorId" value="{{sensorId}}" style="display:none">
+    <br />
+    <div class="form-group">
+      <label class="" for="">起始时间</label>
+      <input type="date" class="form-control" id="" placeholder="起始时间" name="startTime">
+    </div>
+    <div class="form-group">
+      <label class="" for="">终止时间</label>
+      <input type="date" class="form-control" id="" placeholder="终止时间" name="endTime">
+    </div>
+    <button type="submit" class="btn btn-success">下载</button>
+  </form>  
+  {% endverbatim %} 
+</script>
 <script id="" type="text/x-handlebars-template">
   {% verbatim %} 
   {% endverbatim %} 
 </script>
+
+
+

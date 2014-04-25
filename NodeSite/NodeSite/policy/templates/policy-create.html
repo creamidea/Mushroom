@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load compressed %}
+{% block content %}
+<h1>创建养殖策略</h1>
+<form id="create-policy-form" class="form form-inline" role="form" name="post-form">
+  <div class="form-group">
+    <label class="sr-only" for="description">描述</label>
+    <input type="text" class="form-control" id="description" name="description" placeholder="描述">
+  </div>
+  <button type="submit" name="post" class="btn btn-success">提交</button>
+</form>
+<div id="policy-list"></div> 
+<div id="policy-add"></div> 
+
+
+{% include 'policy-script.html' %}
+{% compressed_js 'policy' %}
+{% compressed_js 'policy_create' %}
+{% endblock %}

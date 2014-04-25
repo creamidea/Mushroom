@@ -1,0 +1,44 @@
+ @font-face {font-family: 'ClassicRound-Medium';src: url('classic/eot/style_194538.eot');src: url('classic/eot/style_194538.eot?#iefix') format('embedded-opentype'),url('classic/woff/style_194538.woff') format('woff'),url('classic/ttf/style_194538.ttf') format('truetype'),url('classic/svg/style_194538.svg#ClassicRound-Medium') format('svg');}
+
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'ClassicRound-Medium';
+}
+h1 {
+	font-size: 22px;
+	line-height: 26px;
+}
+h2 {
+	font-size: 20px;
+	line-height: 24px;
+}
+h3 {
+	font-size: 18px;
+	line-height: 22px;
+}
+h4 {
+	font-size: 16px;
+	line-height: 20px;
+}
+h5 {
+	font-size: 14px;
+	line-height: 20px;
+}
+h6 {
+	font-size: 12px;
+	line-height: 18px;
+}
+.dropcap {
+	font-size:45px;
+	font-family: 'ClassicRound-Medium';
+}
+.menu {
+	font-family: 'ClassicRound-Medium';
+}
+.menu ul {
+	font-family: 'ClassicRound-Medium';
+}
+
+#filtering-nav li {
+	font-family: 'ClassicRound-Medium';
+}

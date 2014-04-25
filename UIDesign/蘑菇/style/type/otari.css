@@ -1,0 +1,53 @@
+@font-face {
+    font-family: 'OtariBold-Limited';
+    src: url('otari/Otari-Bold-Limited-webfont.eot');
+    src: url('otari/Otari-Bold-Limited-webfont.eot?iefix') format('eot'),
+         url('otari/Otari-Bold-Limited-webfont.woff') format('woff'),
+         url('otari/Otari-Bold-Limited-webfont.ttf') format('truetype'),
+         url('otari/Otari-Bold-Limited-webfont.svg#webfontfvsbZZP0') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'OtariBold-Limited';
+}
+h1 {
+	font-size: 22px;
+	line-height: 26px;
+}
+h2 {
+	font-size: 20px;
+	line-height: 24px;
+}
+h3 {
+	font-size: 18px;
+	line-height: 22px;
+}
+h4 {
+	font-size: 16px;
+	line-height: 20px;
+}
+h5 {
+	font-size: 14px;
+	line-height: 20px;
+}
+h6 {
+	font-size: 12px;
+	line-height: 18px;
+}
+.dropcap {
+	font-size:45px;
+	font-family: 'OtariBold-Limited';
+}
+.menu {
+	font-family: 'OtariBold-Limited';
+}
+.menu ul {
+	font-family: 'OtariBold-Limited';
+}
+
+#filtering-nav li {
+	font-family: 'OtariBold-Limited';
+}

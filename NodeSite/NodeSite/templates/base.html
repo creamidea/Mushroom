@@ -11,7 +11,7 @@
         {% if title %}
         <title>{{title}}</title>
         {% else %}
-        <title>"蘑菇房监控系统"</title>
+        <title>蘑菇房监控系统</title>
         {% endif %}
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,9 +27,10 @@
         <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-theme.min.css'%}"> -->
 
         {% compressed_js 'modernizr' %}
+        {% compressed_js 'jquery' %}
         <!-- <script src="{% static 'vendor/js/modernizr-2.6.2.min.js' %}"></script> -->
-
     </head>
+
     <body>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -51,13 +52,14 @@
           <!--<button class="btn btn-success" type="submit">登录</button>-->
         <!--</form>-->
         <!--{% endif %}-->
+        {% if user.is_authenticated %}
         {% include "nav.html" %}
+        {% endif %}
         <div class="container">
           {% block content %}{% endblock %}
         </div> 
 
         <!-- 公共部件 -->
-        {% compressed_js 'jquery' %}
         <!--{% compressed_js 'plugins' %}-->
         {% compressed_js 'riot' %}
         {% compressed_js 'handlebars' %}

@@ -1,0 +1,14 @@
+
+{% extends 'base.html' %}
+{% load compressed %}
+{% block content %}
+<section>
+  <h1>正在执行的策略:<strong id="pid"></strong></h1>
+  <div id="policy-now" class="policy"></div> 
+</section>
+
+{% include 'policy-now-template.html' %}
+
+{% include 'policy-script.html' %}
+{% compressed_js 'policy_now' %}
+{% endblock %}
