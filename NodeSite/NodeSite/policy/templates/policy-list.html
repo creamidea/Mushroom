@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load compressed %}
+
+{% block extra_css %}
+{% compressed_css 'policy' %}
+{% endblock%}
+
 {% block content %}
 
   <header>

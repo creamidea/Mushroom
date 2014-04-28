@@ -1,5 +1,5 @@
-'use strict'
 $ ->
+  'use strict'
   # console.log "[policy create]: ", window.location.search
   href = decodeURI(window.location.search).slice(1)
   [from, nowPos, now] = href.split("&&")

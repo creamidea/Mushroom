@@ -4,7 +4,6 @@
 # new PolicyPresenter policy, $renderTo, ["edit"/"view"]
 # ################################
 # console.log "here is show policy"
-
 class Policy
   constructor: (@pid, @nowPos) ->
     $.observable @

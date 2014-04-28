@@ -33,15 +33,6 @@ def signin(request):
         else:
             request.session.set_expiry(0)
     return login(request, 'signin.html')
-    # return login(request, 'signin.html', extra_context=RequestContext(request))
-
-        # form = AuthenticationForm(data=request.POST)
-        # # request.is_ajax()
-        # if form.is_valid():
-        #     auth_login(request, form.get_user())
-        #     # return dict(body="login successfully")
-        #     return HttpResponseRedirect(redirect_to=reverse('home'))
-    # return login(request, template_name='signin.html', )
 
 def signout(request):
     return logout(request, next_page=reverse('signin'))
@@ -127,9 +118,6 @@ def password_change(request):
         # print pkg
         data = json.dumps(pkg)
     return HttpResponse(data, content_type="application/json")
-    # print "old_password: ", request.POST.get("old_password")
-    # return HttpResponse({"body":"hello"})
-    # return HttpResponse("elldasf")
 
 
 @login_required

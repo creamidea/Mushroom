@@ -5,6 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from models import MushroomUser
 # , MushroomUserProfile
 
+# #########################################################
+# 创建权限的地方
 print "Start create permission"
 ct = ContentType.objects.get(app_label='account', model='mushroomuser')
 vote_permission, create = Permission.objects.get_or_create(codename=u"can_vote", name=u"can vote", content_type=ct)

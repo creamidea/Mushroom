@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 {% load compressed %}
+
+{% block extra_css %}
+{% compressed_css 'nv.d3' %}
+{% compressed_css 'sensor' %}
+{% compressed_css 'chart' %}
+{% endblock%}
+
 {% block content %}
 
 <h1>传感器：{{sensor_id}}</h1>
@@ -15,7 +22,6 @@
 
 {% block extra_js %}
 {% compressed_js 'd3' %}
-{% compressed_css 'nv.d3' %}
 {% compressed_js 'nv.d3' %}
 
 {% include "chart-script.html" %}

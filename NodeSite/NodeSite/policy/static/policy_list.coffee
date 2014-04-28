@@ -1,4 +1,5 @@
 $ ->
+  'use strict'
   $policyList = $('#policy-list')
   $.ajax
     url: "/policy/list/"

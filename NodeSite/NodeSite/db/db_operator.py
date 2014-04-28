@@ -28,7 +28,7 @@ class DbOperator(MssqlConnection):
         plant_dict = {}
         try:
             room_id = int(room_id)
-        except Example:
+        except Exception:
             return -1
         self.connect()
         sql_str = u'''select top 1 tb_room.room_id, room_description, tb_plant.plant_id, plant_name, policy_id from 
@@ -47,7 +47,7 @@ class DbOperator(MssqlConnection):
             plant_dict['plantName'] = plant_room[0][3]
             plant_dict['nowPolicy'] = plant_room[0][4]
         except IndexError, e:
-            print 'get nothing in room_id: %d' %room_id
+            print 'get nothing in room_id: %d' % room_id
         # plant_dict = [{
         #     "roomId": room_id,
         #     "roomName": "房间1",

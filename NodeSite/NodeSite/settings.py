@@ -2,9 +2,16 @@
 
 # Django settings for NodeSite project.
 import os
+import socket
 
-DEBUG = True
-# DEBUG = False
+HOSTNAME = socket.gethostname()
+
+if HOSTNAME == 'IDEACENTER':
+    DEBUG = True
+    UPLOAD_PATH_PREFIX = 'NodeSite'
+else:
+    DEBUG = False
+    UPLOAD_PATH_PREFIX = '/home/icecream/NodeSite'
 TEMPLATE_DEBUG = DEBUG
 PROJECT_NAME = 'NodeSite'
 
@@ -12,22 +19,37 @@ PROJECT_NAME = 'NodeSite'
 MIDDLEWARE_ADDRESS = ("10.18.50.66", 9001)
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+    ('icecream', 'creamidea@gmail.com'),
 )
 
 MANAGERS = ADMINS
 
-DATABASES = {
+sqlite3 = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'sqlite3.db',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
+        # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'self.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'sqlite3.db',
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'HOST': '',                     
+        'PORT': '',                    
     }
 }
+mysql = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mushroom',                  
+        'USER': 'mushroom_user',
+        'PASSWORD': 'mushroompasswd',
+        'HOST': 'localhost',                     
+        'PORT': '3306',
+    }
+}
+
+if HOSTNAME == 'IDEACENTER':
+    DATABASES = sqlite3
+else:
+    DATABASES = mysql
 
 CACHES = {
     # 'default': {
@@ -42,14 +64,14 @@ CACHES = {
     
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
 # In a Windows environment this must be set to your system time zone.
 # TIME_ZONE = 'America/Chicago'
-TIME_ZONE = 'Asia/Shanghia'
+TIME_ZONE = 'Asia/Shanghai'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -150,33 +172,23 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     
-    # 系统设置(discard)
-    '%s.mushroom' % PROJECT_NAME,
-
-    # 账户管理 
-    '%s.account' % PROJECT_NAME,
-    # 房间
-    '%s.room' % PROJECT_NAME,
-    # 植物
-    '%s.plant' % PROJECT_NAME,
-    # 传感器
-    '%s.sensor' % PROJECT_NAME,
-    # 控制器
-    '%s.controller' % PROJECT_NAME,
-    # 养殖策略
-    '%s.policy' % PROJECT_NAME,
-    # 搜索系统
-    '%s.search' % PROJECT_NAME,
-    # 数据系统
-    '%s.data' % PROJECT_NAME,
-
-    # 系统设置和控制
-    '%s.system' % PROJECT_NAME,
-
-    # 测试聊天系统
-    '%s.webchat' % PROJECT_NAME,
-    
+    '%s.account' % PROJECT_NAME,    # 账户管理 
+    '%s.room' % PROJECT_NAME,    # 房间
+    '%s.plant' % PROJECT_NAME,    # 植物
+    '%s.sensor' % PROJECT_NAME,    # 传感器
+    '%s.controller' % PROJECT_NAME,    # 控制器
+    '%s.policy' % PROJECT_NAME,    # 养殖策略
+    '%s.search' % PROJECT_NAME,    # 搜索系统
+    '%s.data' % PROJECT_NAME,    # 数据系统
+    '%s.system' % PROJECT_NAME,    # 系统设置和控制
 )
+
+if DEBUG:
+    INSTALLED_APPS += (
+        '%s.webchat' % PROJECT_NAME,    # 测试聊天系统
+    )
+
+# 这里是更改内置的User模型
 AUTH_USER_MODEL = 'account.MushroomUser'
 # AUTH_PROFILE_MODULE = 'account.MushroomUser'
 LOGIN_URL = '/account/login/'
@@ -244,9 +256,14 @@ MIDDLEWARE_CLASSES += (
     'django.middleware.gzip.GZipMiddleware',
     'pipeline.middleware.MinifyHTMLMiddleware',
 )
-PIPELINE = True
+# PIPELINE_ENABLED = False
+
+# Disable Wrapped javascript output
+PIPELINE_DISABLE_WRAPPER = True
 # 使用的存储方式
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+# 这个cached貌似会造成apache 500
+# STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 
 # 在windows下开发，需要加入这句，否则将会报错：
 # CompressorError: The system cannot find the path specified.
@@ -255,14 +272,18 @@ PIPELINE_YUGLIFY_BINARY = 'yuglify'
 
 # 因为实在Windows上开发，所以默认的coffee,lessc不能使用，需要手动更改
 PIPELINE_COFFEE_SCRIPT_BINARY = 'coffee'
-PIPELINE_COFFEE_SCRIPT_ARGUMENTS = '-bc'
+PIPELINE_COFFEE_SCRIPT_ARGUMENTS = '--bare'
 PIPELINE_LESS_BINARY = 'lessc'
 PIPELINE_LESS_ARGUMENTS = '-x'
 # 还没有想好如何配置yui-compressor压缩
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.yuglify.YuglifyCompressor'
 # PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.yui.YUICompressor'
 # PIPELINE_CSS_COMPRESSOR = None
 # JS压缩貌似有问题，会报错在windows:CompressorError: The system cannot find the path specified.
 PIPELINE_JS_COMPRESSOR = None
+
+
 # 配置编译器，参数在上面
 PIPELINE_COMPILERS = (
     'pipeline.compilers.less.LessCompiler',
@@ -290,15 +311,6 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/nv.d3.css',
     },
-    'main': {
-        'source_filenames': (
-            'less/login.less',
-            'less/echo.less',
-            'less/main.less',
-            'vendor/css/main.css',
-        ),
-        'output_filename': 'css/main.css',
-    },
     'bootstrap-datetimepicker': {
         'source_filenames': (
             'vendor/css/bootstrap-datetimepicker.min.css',
@@ -313,11 +325,70 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'css/picker.min.css',
     },
-    'le': {
+    'main': {
         'source_filenames': (
-            'less/le.less',
+            'vendor/css/main.css',
+            'less/main.less',
         ),
-        'output_filename': 'css/le.css',
+        'output_filename': 'css/main.css',
+    },
+    'account': {
+        'source_filenames': (
+            'less/account.less',
+        ),
+        'output_filename': 'css/account.css',
+    },
+    'policy': {
+        'source_filenames': (
+            'less/policy.less',
+        ),
+        'output_filename': 'css/policy.css',
+    },
+    
+    'room': {
+        'source_filenames': (
+            'less/room.less',
+        ),
+        'output_filename': 'css/room.css',
+    },
+    
+    'controller': {
+        'source_filenames': (
+            'less/controller.less',
+            'less/room.less',
+        ),
+        'output_filename': 'css/controller.css',
+    },
+    
+    'sensor': {
+        'source_filenames': (
+            'less/sensor.less',
+            'less/room.less',
+        ),
+        'output_filename': 'css/sensor.css',
+    },
+
+    'chart': {
+        'source_filenames': (
+            'less/chart.less',
+            'less/room.less',
+        ),
+        'output_filename': 'css/chart.css',
+    },
+    
+    'main2': {
+         'source_filenames': (
+            'vendor/css/main.css',
+            'less/login.less',
+            'less/echo.less',
+            'less/main.less',
+            'less/chart.less',
+            'less/room.less',
+            'less/sensor.less',
+            'less/controller.less',
+            'less/policy.less',
+        ),
+        'output_filename': 'css/main.css',
     },
 }
 
@@ -360,13 +431,6 @@ PIPELINE_JS = {
         ),
         'output_filename': 'js/riot.js',
     },
-    'riot': {
-        'source_filenames': (
-            'vendor/js/riot.min.js',
-        ),
-        'output_filename': 'js/riot.js',
-    },
-
     'd3': {
         'source_filenames': (
             'vendor/js/d3.min.js',
@@ -400,28 +464,28 @@ PIPELINE_JS = {
         'output_filename': 'js/picker.min.js',
     },
     # -----------------------------------------
-    'plugins': {
-        'source_filenames': (
-            'coffee/plugins.coffee',
-        ),
-        'output_filename': 'js/plugins.js',
-    },
-    'main': {
-        'source_filenames': (
-            'coffee/main.coffee',
-        ),
-        'output_filename': 'js/main.js',
-    },
-    'components': {
-        'source_filenames': (
-            'coffee/login.coffee',
-            'coffee/room.coffee',
-            'coffee/sidebar.coffee',
-            'coffee/register.coffee',
-            'coffee/setting.coffee',
-        ),
-        'output_filename': 'js/components.js',
-    },
+    # 'plugins': {
+    #     'source_filenames': (
+    #         'coffee/plugins.coffee',
+    #     ),
+    #     'output_filename': 'js/plugins.js',
+    # },
+    # 'main': {
+    #     'source_filenames': (
+    #         'coffee/main.coffee',
+    #     ),
+    #     'output_filename': 'js/main.js',
+    # },
+    # 'components': {
+    #     'source_filenames': (
+    #         # 'coffee/login.coffee',
+    #         # 'coffee/room.coffee',
+    #         # 'coffee/sidebar.coffee',
+    #         # 'coffee/register.coffee',
+    #         # 'coffee/setting.coffee',
+    #     ),
+    #     # 'output_filename': 'js/components.js',
+    # },
     'room': {
         'source_filenames': (
             'room.coffee',

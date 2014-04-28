@@ -13,7 +13,7 @@ from django.contrib.sites.models import RequestSite
 from django.contrib.auth.decorators import login_required
 from ..decorators import json_response
 from NodeSite.db.db_operator import DbOperator
-from NodeSite.settings import MEDIA_ROOT
+from NodeSite.settings import MEDIA_ROOT, UPLOAD_PATH_PREFIX
 from models import OutputStatistics
 
 db = DbOperator()
@@ -176,8 +176,7 @@ def policy(request, policy_id):
             # outputstatistics = OutputStatistics.objects.filter(policy_id=policy_id)
             # print outputstatistics.values(), dir(outputstatistics)
             return render(request, "policy-item.html",
-                          {'title': title,
-                           'policy_id': policy_id,
+                          {'title': title, 'policy_id': policy_id,
                            # 'values': outputstatistics.values(),
                           })
 
@@ -271,7 +270,7 @@ def policy_instance_image_save(request, piid):
         # print image.content_type
         # TODO: 这里是以时间作为文件的名称的，
         # 估计以后遇到频繁上传时最好使用MD5之类的HASH方法。
-        image_prefix = 'NodeSite/static/upload/'
+        image_prefix = UPLOAD_PATH_PREFIX+'/static/upload/'
         image_name = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         message = u"未知错误。 %s" % back
         try:
@@ -292,9 +291,9 @@ def policy_instance_image_save(request, piid):
                 # 说明这是一条新纪录
                 OutputStatistics(
                     policy_instance_id=piid,
-                    image=re.match('^NodeSite(.*)', pathname).groups()[0]).save()
+                    image=re.match('^%s(.*)'%UPLOAD_PATH_PREFIX, pathname).groups()[0]).save()
             else:
-                record.update(image=re.match('^NodeSite(.*)', pathname).groups()[0])
+                record.update(image=re.match('^%s(.*)'%UPLOAD_PATH_PREFIX, pathname).groups()[0])
         except Exception, e:
             # print e
             message = u"存入错误。%s" % back

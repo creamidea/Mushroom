@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load compressed %}
+
+{% block extra_css %}
+{% compressed_css 'policy' %}
+{% endblock%}
+
 {% block content %}
 <h1>策略：{{policy_id}}</h1>
 

@@ -1,5 +1,5 @@
 $ ->
-
+  'use strict'
   pid = (window.location.pathname).replace(/\/policy\/(\d+)\//g, "$1")
   console.log pid
 

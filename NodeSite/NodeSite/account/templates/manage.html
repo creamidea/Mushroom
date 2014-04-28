@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% load compressed %}
+
+{% block extra_css %}
+{% compressed_css 'account' %}
+{% endblock%}
 
 {% block content %}
 

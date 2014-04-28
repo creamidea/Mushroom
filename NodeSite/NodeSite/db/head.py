@@ -94,7 +94,20 @@ db_conn_info2 = {
     "PASSWORD"  : "wsngump",
     "DATABASE"  : "mushroom",
     }
-db_conn_info = db_conn_info1
+db_conn_info3 = {
+    "HOST"      : "10.18.50.98\\sqlserver2008",
+    "USER"      : "sa",
+    "PASSWORD"  : "cslg123456,./",
+    "DATABASE"  : "mushroom",
+    }
+db_conn_info = db_conn_info3
+
+# 这个是在Linux上时使用的
+unixodbc = {
+    "DSN": 'sqlserverdatasource',
+    "UID": 'sa',
+    "PASSWORD": 'cslg123456,./',
+}
 
 #=============日志模块配置===============#
 #: 日志配置参数

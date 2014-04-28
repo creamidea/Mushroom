@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from functools import wraps
 # from decorator import decorator
 import json
@@ -22,6 +23,7 @@ def serialize(target="json"):
             return response
         return wrapper2
     return wrapper1
+
 
 def json_response(func):
     "使用装饰器返回json格式的回应包"

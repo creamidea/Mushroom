@@ -36,41 +36,19 @@ class MssqlConnection:
         self.controller_dict = {}
         
         self.load_table()
-    def __init__bk(self, serverIp = db_conn_info['HOST'], dbName = db_conn_info['DATABASE'], \
-                 uid = db_conn_info['USER'], pwd = db_conn_info['PASSWORD']):
-        #: 服务器地址
-        self.host = serverIp
-        #: 数据据库名称
-        self.db_name = dbName
-        #: 登录用户
-        self.user = uid
-        #: 登录密码
-        self.password = pwd    
-        #: 数据库连接句柄  
-        self.handler = ''
-        #: 连接游标
-        self.cursor = ''
-        
-        #: 植物表对象
-        self.plant_dict = {}
-        self.plant_name2id = {}
-        #: 传感器表对象
-        self.sensor_dict = {}
-        #: 房间表对象
-        self.room_dict = {}
-        self.room_desc2id = {}
-        #: 控制器ID与房间号映射
-        self.controller_dict = {}
-        
-        self.load_table()
 
     def connect(self):
         """
         建立数据库连接
         """
         if self.handler == '':
-            self.handler = pyodbc.connect(driver='{SQL Server}', server=self.host, \
-                                          database=self.db_name, uid=self.user, pwd=self.password, unicode_results = True)  
+            import platform
+            os_type = platform.system()
+            if os_type == 'Windows':
+                self.handler = pyodbc.connect(driver='{SQL Server}', server=self.host, \
+                                            database=self.db_name, uid=self.user, pwd=self.password, unicode_results = True)
+            elif os_type == 'Linux':
+                self.handler = pyodbc.connect(dsn=unixodbc["DSN"], uid=unixodbc["UID"], pwd=unixodbc["PASSWORD"], unicode_results = True)  
             self.cursor = self.handler.cursor()
             
     
@@ -165,6 +143,10 @@ class MssqlConnection:
         
         sql_str = 'select room_id, room_description from tb_room'
         query_list = self.queryAll(sql_str)
+        
+        if type(query_list) == 'int':
+            self.close()
+            
         for i in query_list:
             self.room_dict[i[0]] = i[1]
             self.room_desc2id[i[1]] = i[0]
@@ -172,6 +154,10 @@ class MssqlConnection:
             
         sql_str = 'select plant_id, plant_name from tb_plant'
         query_list = self.queryAll(sql_str)
+        
+        if type(query_list) == 'int':
+            self.close()
+            
         for i in query_list:
             temp = TablePlant()
             temp.plant_id      = i[0]

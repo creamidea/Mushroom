@@ -1,6 +1,10 @@
 {% extends 'room-item.html' %}
 {% load compressed %}
 
+{% block extra_css %}
+{% compressed_css 'controller' %}
+{% endblock%}
+
 <!-- 绘制图表 -->
 {% block widget %}
    <div id="controller-list" class="panel panel-default" name="controller-list"></div> 

@@ -1,2 +1,0 @@
-hello = ->
-  print "hello, world"

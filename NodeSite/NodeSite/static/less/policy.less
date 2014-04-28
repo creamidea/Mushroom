@@ -1,0 +1,166 @@
+@import (once) "plugin";
+
+/* 策略 */
+#policy-list {
+    ul {
+        list-style-type: none;
+        li {
+            margin: 20px 0;
+            padding: 20px;
+            border-left: 3px solid #eee;
+            background-color: #fdf7f7;
+            border-color: #d9534f;
+
+            width: 48%;
+            float: left;
+
+            img {
+                width: 24%;
+            }
+        }
+        .clearfix();
+    }
+}
+.policy{
+    position: relative;
+    text-align: center;
+    .save-policy {
+        .active a{
+            cursor: default;
+            text-decoration: none;
+            background: yellow;
+        }
+        p {
+            /* float: left; */
+            /* margin: auto 18px; */
+            box-shadow: 1px 1px 3px gray;
+            background: #eef;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        p:last-child {
+            .clearfix()
+        }
+    }
+    .container {
+        .middle, .left {
+            /* overflow-y: scroll; */
+            height: 600px;
+        }
+    }
+    table input {
+        display: none;
+        width: 60%;
+    }
+    table th {
+        text-align: center;
+    }
+    form[name="add-record-form"] {
+        input {
+            /* width: 39%; */
+        }
+        button {
+            width: 22%;
+        }
+    }
+    .policy-add {
+        margin: 20px 0;
+        padding: 20px;
+        border-left: 3px solid #eee;
+        background-color: #fcf8f2;
+        border-color: #f0ad4e;
+        input {
+            margin: 2% auto;
+        }
+    }
+    .post-form-wrapper {
+        margin: 20px 0;
+        padding: 20px;
+        border-left: 3px solid #eee;
+        background-color: #fdf7f7;
+        border-color: #d9534f;
+        
+        form[name="post-form"] {
+            /* position: fixed; */
+            /* bottom: 16px; */
+            width: 50%;
+            /* width: 100%; */
+            button {
+            /* width: 13%; */
+            }
+        }
+    }
+    table {
+        .date, .hour {
+            /* background-color: #; */
+            /* color: white; */
+            position: relative;
+        }
+        .co2 {
+            background-color: #d9edf7;
+        }
+        .humidity {
+            background-color: #dff0d8;
+        }
+        .brightness {
+            background-color: #fcf8e3;
+        }
+        .temperature {
+            background-color: #f2dede;
+        }
+    }
+    .now-playing {
+        p {
+            color: gray;
+        }
+    }
+    .pre-playing {
+        p {
+            color: gray;
+        }
+    }
+}
+#policy-plan {
+    form {
+        text-align: center;
+    }
+}
+#policy-plan-list {
+    padding: 0 0;
+    li {
+        list-style-type: none;
+        width: 66%;
+        margin: 0 auto;
+        font-size: 1em;
+        p {
+            float: left;
+            margin-left: 18px;
+        }
+        .clearfix()
+    }
+}
+
+/* 产量输出区 */
+#output-area {
+    form {
+        margin: 20px 0;
+        padding: 20px;
+        border-left: 3px solid #eee;
+        background-color: #f4f8fa;
+        border-color: #5bc0de;
+    }
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+        li {
+            margin: 20px 0;
+            padding: 20px;
+            border-left: 3px solid #eee;
+            background-color: #fdf7f7;
+            border-color: #d9534f;
+            img {
+                width: 24%;
+            }
+        }
+    }
+}

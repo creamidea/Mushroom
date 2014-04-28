@@ -27,7 +27,7 @@ LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 USE_I18N = True
 MEDIA_ROOT = join(__dir__, 'static')
-MEDIA_URL = '/static/media/'
+MEDIA_URL = '/static/webchat/media/'
 SECRET_KEY = 'nv8(yg*&1-lon-8i-3jcs0y!01+rem*54051^5xt#^tzujdj!c'
 TEMPLATE_LOADERS = (
     # 'django.template.loaders.filesystem.load_template_source',

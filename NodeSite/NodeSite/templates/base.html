@@ -21,14 +21,11 @@
         {% compressed_css 'normalize' %}
         {% compressed_css 'main' %}
         {% compressed_css 'bootstrap' %}
-        <!-- <link rel="stylesheet" href="{% static 'vendor/css/normalize.css' %}"> -->
-        <!-- <link rel="stylesheet" href="{% static 'vendor/css/main.css' %}"> -->
-        <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap.min.css'%}"> -->
-        <!-- <link rel="stylesheet" href="{% static 'vendor/css/bootstrap-theme.min.css'%}"> -->
+        {% block extra_css %}{% endblock %}
 
         {% compressed_js 'modernizr' %}
         {% compressed_js 'jquery' %}
-        <!-- <script src="{% static 'vendor/js/modernizr-2.6.2.min.js' %}"></script> -->
+
     </head>
 
     <body>
@@ -37,21 +34,6 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <!--{% if user.is_authenticated %}-->
-        <!--{{ user.username }}-->
-        <!--<a href="{% url 'm_settings' %}">蘑菇房系统设置</a>-->
-        <!--<a href="{% url 'manage' %}">用户管理</a>-->
-        <!--<a href="{% url 'profile' %}">账户设置</a>-->
-        <!--<a href="{% url 'signout' %}">退出</a>-->
-        <!--{% else %}-->
-        <!--<form id="login" class="login" action="/account/login/" method="post">-->
-          <!--<label>用户名</label>-->
-          <!--<input class="form-control" type="text" name="username" value="" />-->
-          <!--<label>密码</label>-->
-          <!--<input class="form-control" type="password" name="password" value="" />-->
-          <!--<button class="btn btn-success" type="submit">登录</button>-->
-        <!--</form>-->
-        <!--{% endif %}-->
         {% if user.is_authenticated %}
         {% include "nav.html" %}
         {% endif %}
@@ -60,20 +42,13 @@
         </div> 
 
         <!-- 公共部件 -->
-        <!--{% compressed_js 'plugins' %}-->
-        {% compressed_js 'riot' %}
         {% compressed_js 'handlebars' %}
         {% compressed_js 'underscore' %}
         {% compressed_js 'bootstrap' %}
+        {% compressed_js 'riot' %}
 
         <!-- 加载各自页面自己的js模块 -->
         {% block extra_js %}{% endblock %}
-
-        <!-- <script src="{% static 'vendor/js/bootstrap.min.js' %}"></script> -->
-        <!-- <script src="{% static 'js/plugins.js' %}"></script> -->
-        <!-- <script src="{% static 'js/main.js' %}"></script> -->
-
-        <!--{% compressed_js 'plugins' %}-->
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <!-- 暂时不需要 -->

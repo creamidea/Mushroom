@@ -1,21 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
+
 import os
 import sys
 from django.core.management import execute_from_command_line, call_command
+# 将其安全转成协程gevent
 # from gevent import monkey
 # monkey.patch_all()
 
-# from preload import welcome
-# welcome()
-
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "NodeSite.settings")
-    # call_command('python preload.py')
     execute_from_command_line(sys.argv)
-    # welcome()
 
+# #####################################################################
+# 测试gevent
 # import os
 # import sys
 # from gevent import monkey; monkey.patch_all()

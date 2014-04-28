@@ -1,0 +1,105 @@
+@import (once) "plugin";
+
+/* 房间 */
+.room {
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    margin-bottom: 50px;
+    background-color: white;
+    box-sizing: border-box;
+    border: 1px solid #d8d8d8;
+    border-bottom-width: 2px;
+    border-top-width: 0;
+    vertical-align: top;
+    position: relative;
+    display: inline-table;
+
+    padding: 20px 20px;
+    margin: auto 1%;
+
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    -ms-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    /* &:hover { */
+    /*     -webkit-transform: scale(1.04); */
+    /*     -moz-transform: scale(1.04); */
+    /*     -o-transform: scale(1.04); */
+    /*     -ms-transform: scale(1.04); */
+    /*     transform: scale(1.04); */
+    /* } */
+
+    /* #room-list & { */
+    /*     display: inline-table; */
+    /* } */
+
+    &,.list {
+        list-style-type: none;
+    }
+    .card {
+        /* box-shadow: 1px 1px 4px gray; */
+        padding: 1% 5%;
+        > div {
+            /* border: dashed gray 4px; */
+            padding: 1% 2%;
+            margin: 2% auto;
+        }
+    }
+    .average {
+        /* height: 135px;          /\*修正高度*\/ */
+        /* .lastest-time { */
+        /*     font-size: 2em; */
+        /*     text-align: center; */
+        /* } */
+        /* p { */
+        /*     float: left; */
+        /*     margin: auto 12%; */
+        /*     font-size: 1.5em; */
+        /* } */
+        /* .value-unit(); */
+    }
+    .widget {
+        /* position: absolute; */
+        /* right: 20px; */
+    }
+    .meta-info {
+        border-bottom: 1px solid #D8C9F8;
+        p {
+            display: inline-table;;
+            font-size: 1.4em;
+        }
+    }
+    .latest-data {
+        text-align: center;
+        margin-bottom: 60px;
+        .time {
+            color: #427fed;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .sensor {
+            margin: 10% auto;
+            .data {
+                display: inline-table;
+                font-size: 1.4em;
+                margin: auto 10%;
+            }
+        }
+        .value-unit();
+    }
+    
+    .widget-panel {
+        .panel {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+    }
+
+    .image {
+        text-align: center;
+    }
+}
+

@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     url(r'^system/', include('NodeSite.system.urls')),
 )
 
-urlpatterns += patterns('NodeSite.views',
+urlpatterns += patterns('NodeSite.signalviews',
     # 首页
     url(r'^signal-page/$', 'signal_page'),
     # 用户登录/登出  
@@ -61,7 +61,6 @@ urlpatterns += patterns('NodeSite.views',
 
     # 配置文件设置
     url(r'^config/log/(\w+)$', 'config_log'),
-    
 )
 
 # from article.views import ArticleDetailView
@@ -76,7 +75,6 @@ if settings.DEBUG:
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^mushroom/', include('NodeSite.mushroom.urls')),
     url(r'^webchat/', include('NodeSite.webchat.urls')),
     )
     # test message

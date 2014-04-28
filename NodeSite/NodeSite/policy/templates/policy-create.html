@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load compressed %}
+
+{% block extra_css %}
+{% compressed_css 'policy' %}
+{% endblock%}
+
 {% block content %}
 <h1>创建养殖策略</h1>
 <form id="create-policy-form" class="form form-inline" role="form" name="post-form">

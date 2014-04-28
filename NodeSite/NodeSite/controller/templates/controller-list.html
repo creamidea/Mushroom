@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load compressed %}
+{% block extra_css %}
+{% compressed_css 'controller' %}
+{% endblock%}
 {% block content %}
 <h1>控制器列表</h1>
 {% endblock %}

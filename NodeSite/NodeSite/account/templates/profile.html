@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load i18n static %}
+{% load compressed %}
+
+{% block extra_css %}
+{% compressed_css 'account' %}
+{% endblock%}
 
 {% block content %}
 

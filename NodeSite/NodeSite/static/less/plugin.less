@@ -1,0 +1,131 @@
+
+/* 阴影效果 */
+.box-shadow (@x: 0; @y: 0; @blur: 1px; @color: #000) {
+  -moz-box-shadow: @arguments;
+  -webkit-box-shadow: @arguments;
+  box-shadow: @arguments;
+}
+.shadow (@h-shadow: 1px, @v-shadow: 1px, @blur: 4px, @spread: 0, @color: gray) {
+    -moz-box-shadow: @h-shadow @v-shadow @blur @spread @color;
+    -webkit-box-shadow: @h-shadow @v-shadow @blur @spread @color;
+    box-shadow: @h-shadow @v-shadow @blur @spread @color;
+}
+.inner-shadow (@h-shadow: 1px, @v-shadow: 1px, @blur: 4px, @color: gray) {
+    -moz-box-shadow: inset @h-shadow @v-shadow @blur @color;
+    -webkit-box-shadow: inset @h-shadow @v-shadow @blur @color;
+    box-shadow: inset @h-shadow @v-shadow @blur @color;
+}
+.one-side-shadow {
+	  -webkit-box-shadow: 0 8px 6px -6px black;
+	  -moz-box-shadow: 0 8px 6px -6px black;
+	  box-shadow: 0 8px 6px -6px black;
+}
+
+/* 圆角 */
+.border-radius (@radius: 4px) {
+    -moz-border-radius: @radius;
+    -webkit-border-radius: @radius;
+    border-radius: @radius;
+}
+
+/* 变形和动画 */
+.transform (@angle:16deg) {
+    -webkit-transform: rotate(@angle);
+    -moz-transform: rotate(@angle);
+    -o-transform: rotate(@angle);
+}
+
+.transition (@param) {
+    -moz-transition: @param;
+    -webkit-transition: @param;
+    -o-transition: @param;
+    transition: @param;
+}
+
+/* little helper */
+.no-link {
+    cursor: default;
+}
+// Mixin itself
+.clearfix() {
+    &:before,
+    &:after {
+        content: " ";
+        display: table;
+    }
+    &:after {
+        clear: both;
+    }
+}
+
+.wrap () {
+    text-wrap: wrap;
+    white-space: -moz-pre-wrap;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+* [brightness="yellow"] {
+    background: #FACC2E;
+}
+* [brightness="white"] {
+    background: white;
+}
+* [brightness="blue"] {
+    background: #24a0da;
+}
+
+.table.menu {
+    background: blue !important;
+    li {
+        float:left;
+        list-style-type: none;
+    }
+    li:hover {
+        color: #428bca;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
+
+/* 补丁 */
+/* 修正bootstrap的container的margin-right:-32px */
+.moveright16px {
+    margin-left: -16px !important;
+}
+
+#download-area {
+    background: #dff0d8;
+    padding: 3px 0;
+    box-shadow: 1px 2px 2px #dff0d8;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* 传感器 */
+.value-unit {
+    .unit(@cn-name, @unit, @font-size1:1em, @font-size2:1em) {
+        &:before {
+            display: block;
+            /* content: @cn-name; */
+            font-size: @font-size1;
+        }
+        &:after {
+            position: absolute;
+            content: @unit;
+            font-size: @font-size2;
+        }
+    }
+    div[type="temperature"] strong a {
+        .unit("温度","℃")
+    }
+    div[type*="co2"] strong a {
+        .unit( "二氧化碳", "g/l")
+    }
+    div[type*="humidity"] strong a {
+        .unit( "湿度", "%")
+    }
+    div[type*="light"] strong a {
+        .unit( "光照", "lux")
+    }
+}

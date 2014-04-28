@@ -1,0 +1,11 @@
+copyright: CSLG; version: v0.0.1
+Start create permission
+Start creating account...
+
+You have requested to collect static files at the destination
+location as specified in your settings.
+
+This will overwrite existing files!
+Are you sure you want to do this?
+
+Type 'yes' to continue, or 'no' to cancel: 

@@ -1,5 +1,5 @@
-'use strict'
 $ ->
+  'use strict'
   # alert "hi"
   console.log "here is room item"
   # roomId = window.location.pathname.split("/")[2]
