@@ -102,3 +102,8 @@ ISSUE
 -----
 用于记录django开发过程中遇到的问题，或者学习到的相关新知识，或者好的点子
 地址：https://github.com/creamidea/Mushroom/issues
+
+
+部署配置
+------
+GIST: https://gist.github.com/creamidea/11364445
